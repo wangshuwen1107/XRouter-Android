@@ -78,7 +78,7 @@ public class XRouter {
             Logger.e("inject activity not null");
             return;
         }
-        Syringe syringe = mSyringeManager.getSyringe(activity.getClass().getSimpleName());
+        Syringe syringe = mSyringeManager.getSyringe(activity);
         if (null == syringe) {
             return;
         }

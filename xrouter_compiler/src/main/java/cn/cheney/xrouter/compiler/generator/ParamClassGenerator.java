@@ -8,49 +8,48 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 
-import javax.annotation.processing.Filer;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
-import cn.cheney.xrouter.annotation.Param;
-import cn.cheney.xrouter.compiler.contant.TypeKind;
+import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.compiler.XRouterProcessor;
+import cn.cheney.xrouter.compiler.contant.TypeKind;
 import cn.cheney.xrouter.core.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.syringe.Syringe;
 
 public class ParamClassGenerator {
 
-    private Element activityElement;
+    private TypeElement activityElement;
     private String className;
     private String fileName;
 
 
-    public ParamClassGenerator(Element element) {
-        this.activityElement = element;
-        this.className = element.getSimpleName().toString();
+    public ParamClassGenerator(TypeElement activityElement) {
+        this.activityElement = activityElement;
+        this.className = activityElement.getSimpleName().toString();
         this.fileName = GenerateFileConstant.PARAM_FILE_PREFIX + className;
         methodBuilder.addStatement("$T activity =($T)target",
-                activityElement.asType(),
-                activityElement.asType());
+                this.activityElement.asType(),
+                this.activityElement.asType());
     }
 
     /**
      * 最后生产java文件
-     *
-     * @param filer out put
      */
-    public void generateJavaFile(Filer filer) {
+    public void generateJavaFile(XRouterProcessor.Holder holder) {
+        Name qualifiedName = holder.elementUtils.getPackageOf(activityElement).getQualifiedName();
         TypeSpec typeSpec = TypeSpec.classBuilder(fileName)
                 .addSuperinterface(Syringe.class)
                 .addJavadoc(GenerateFileConstant.WARNING_TIPS)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodBuilder.build())
                 .build();
-        JavaFile javaFile = JavaFile.builder("cn.cheney.xrouter", typeSpec)
+        JavaFile javaFile = JavaFile.builder(qualifiedName.toString(), typeSpec)
                 .build();
         try {
-            javaFile.writeTo(filer);
+            javaFile.writeTo(holder.filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +69,7 @@ public class ParamClassGenerator {
     /**
      * activity.key = activity.getIntent().getStringExtra()
      */
-    public void generateSeg(XRouterProcessor.Holder holder, VariableElement variableElement, Param param) {
+    public void generateSeg(XRouterProcessor.Holder holder, VariableElement variableElement, XParam param) {
         String key = param.name().isEmpty() ? variableElement.getSimpleName().toString() : param.name();
         String getExtraStr = getExtraByType(holder.typeUtils.typeExchange(variableElement));
         if (getExtraStr.isEmpty()) {

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.CLASS)
-public @interface Param {
+public @interface XParam {
 
     String name() default "";
 

@@ -24,7 +24,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import cn.cheney.xrouter.annotation.Param;
+import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.compiler.generator.ModuleClassGenerator;
 import cn.cheney.xrouter.compiler.generator.ParamClassGenerator;
@@ -55,7 +55,7 @@ public class XRouterProcessor extends AbstractProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         HashSet<String> supportTypes = new LinkedHashSet<>();
         supportTypes.add(XRoute.class.getCanonicalName());
-        supportTypes.add(Param.class.getCanonicalName());
+        supportTypes.add(XParam.class.getCanonicalName());
         return supportTypes;
     }
 
@@ -92,7 +92,7 @@ public class XRouterProcessor extends AbstractProcessor {
         if (null == variableElement) {
             return null;
         }
-        Param param = variableElement.getAnnotation(Param.class);
+        XParam param = variableElement.getAnnotation(XParam.class);
         if (null == param) {
             return null;
         }
@@ -101,7 +101,7 @@ public class XRouterProcessor extends AbstractProcessor {
     }
 
     private void processParams(RoundEnvironment roundEnvironment) {
-        Set<? extends Element> elementSet = roundEnvironment.getElementsAnnotatedWith(Param.class);
+        Set<? extends Element> elementSet = roundEnvironment.getElementsAnnotatedWith(XParam.class);
         if (null == elementSet || elementSet.isEmpty()) {
             return;
         }
@@ -143,9 +143,9 @@ public class XRouterProcessor extends AbstractProcessor {
             ParamClassGenerator paramClassGenerator = new ParamClassGenerator(typeElement);
             for (Element paramElement : paramsElements) {
                 paramClassGenerator.generateSeg(holder, (VariableElement) paramElement,
-                        paramElement.getAnnotation(Param.class));
+                        paramElement.getAnnotation(XParam.class));
             }
-            paramClassGenerator.generateJavaFile(holder.filer);
+            paramClassGenerator.generateJavaFile(holder);
         }
     }
 

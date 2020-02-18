@@ -1,11 +1,9 @@
 package cn.cheney.xrouter.core.syringe;
 
-import android.text.TextUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.cheney.xrouter.core.constant.GenerateFileConstant;
+import static cn.cheney.xrouter.core.constant.GenerateFileConstant.PARAM_FILE_PREFIX;
 
 public class SyringeManager {
 
@@ -15,15 +13,16 @@ public class SyringeManager {
         this.syringeMap = new HashMap<>();
     }
 
-    public Syringe getSyringe(String className) {
-        if (TextUtils.isEmpty(className)) {
+    public Syringe getSyringe(Object object) {
+        if (null == object) {
             return null;
         }
+        String className = object.getClass().getSimpleName();
+        String packageName = object.getClass().getPackage().getName();
         Syringe syringe = syringeMap.get(className);
         if (null == syringe) {
             try {
-                syringe = (Syringe) Class.forName(GenerateFileConstant.PARAM_CLASS_PREFIX +
-                        className).newInstance();
+                syringe = (Syringe) Class.forName(getFileName(packageName, className)).newInstance();
                 if (null != syringe) {
                     syringeMap.put(className, syringe);
                 }
@@ -34,5 +33,9 @@ public class SyringeManager {
         return syringe;
     }
 
+
+    private String getFileName(String packageName, String className) {
+        return packageName + "." + PARAM_FILE_PREFIX + className;
+    }
 
 }
