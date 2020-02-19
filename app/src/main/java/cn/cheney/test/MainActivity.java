@@ -18,13 +18,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ARouter.getInstance().build("/app/test1").navigation();
+                ARouter.getInstance().build("/app/test1")
+                        .navigation();
 
                 Book book = new Book();
                 book.name = "Kotlin";
                 XRouter.build("home/test1")
                         .put("testParam", book)
-                        .start();
+                        .action("cn.cheney.xrouter")
+                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
+                        .start(1000);
             }
         });
     }

@@ -73,12 +73,12 @@ public class ModuleClassGenerator {
                             TypeElement classType,
                             String module,
                             String path) {
-        String segBuilder = "$L.put($S,new XRouteMeta(" + "$S,$T.class,$S,$S" + "))";
         TypeMirror typeActivity = holder.elementUtils
                 .getTypeElement("android.app.Activity").asType();
         if (holder.types.isSubtype(classType.asType(), typeActivity)) {
-            methodBuilder.addStatement(segBuilder, "routeMap", path, RouteType.ACTIVITY,
-                    classType, module, path);
+            String segBuilder = "$L.put($S,new XRouteMeta(" + "$T.ACTIVITY,$T.class,$S,$S" + "))";
+            methodBuilder.addStatement(segBuilder, "routeMap", path,
+                    RouteType.class, classType, module, path);
         }
     }
 

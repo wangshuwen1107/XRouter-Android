@@ -1,28 +1,32 @@
 package cn.cheney.xrouter.core.entity;
 
+import android.app.Activity;
+
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import cn.cheney.xrouter.core.constant.RouteType;
+
 public class XRouteMeta {
 
-    private String type;
+    private RouteType type;
 
     private String path;
 
     private String module;
 
-    private Class className;
+    private Class<? extends Activity> className;
 
     private Map<String, Type> paramsTypeMap;
 
-    public XRouteMeta(String type, Class className, String module, String path) {
+    public XRouteMeta(RouteType type, Class<? extends Activity> className, String module, String path) {
         this.type = type;
         this.path = path;
         this.module = module;
         this.className = className;
     }
 
-    public String getType() {
+    public RouteType getType() {
         return type;
     }
 
@@ -34,7 +38,7 @@ public class XRouteMeta {
         return module;
     }
 
-    public Class getClassName() {
+    public Class<? extends Activity> getClassName() {
         return className;
     }
 

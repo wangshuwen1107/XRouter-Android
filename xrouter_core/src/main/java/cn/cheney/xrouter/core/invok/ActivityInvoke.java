@@ -6,22 +6,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 import java.io.Serializable;
 import java.util.Map;
 
-import cn.cheney.xrouter.core.entity.XRouteMeta;
 import cn.cheney.xrouter.core.exception.RouterException;
 
 public class ActivityInvoke extends Invokable<Integer> {
 
     private Intent intent;
+    private Class<? extends Activity> clazz;
+    private String action;
+    private int requestCode = -1;
+    private int enterAnim = -1;
+    private int exitAnim = -1;
 
-    public ActivityInvoke(XRouteMeta xRouteMeta) {
-        this.routeMeta = xRouteMeta;
+    public ActivityInvoke() {
     }
 
     @Override
@@ -29,15 +34,28 @@ public class ActivityInvoke extends Invokable<Integer> {
         if (null == context) {
             return -1;
         }
-        intent = new Intent(context, routeMeta.getClassName());
+        intent = new Intent(context, clazz);
+        fillIntent(intent, params);
+        if (!TextUtils.isEmpty(action)) {
+            intent.setAction(action);
+        }
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return 1;
         }
-        fillIntent(intent, params);
-        context.startActivity(intent);
+        Activity activity = ((Activity) context);
+        if (requestCode >= 0) {
+            activity.startActivityForResult(intent, requestCode);
+        } else {
+            activity.startActivity(intent);
+        }
+        if (enterAnim >= 0 || exitAnim >= 0) {
+            activity.overridePendingTransition(enterAnim >= 0 ? enterAnim : -1,
+                    enterAnim >= 0 ? enterAnim : -1);
+        }
         return 1;
     }
-
 
     private static Intent fillIntent(Intent intent, Map<String, Object> params) {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
@@ -87,5 +105,48 @@ public class ActivityInvoke extends Invokable<Integer> {
             }
         }
         return intent;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private ActivityInvoke activityInvoke;
+
+        Builder() {
+            activityInvoke = new ActivityInvoke();
+        }
+
+        public Builder className(Class<? extends Activity> clazz) {
+            activityInvoke.clazz = clazz;
+            return this;
+        }
+
+        public Builder requestCode(int requestCode) {
+            activityInvoke.requestCode = requestCode;
+            return this;
+        }
+
+        public Builder action(String action) {
+            activityInvoke.action = action;
+            return this;
+        }
+
+        public Builder anim(int enterAnim, int exitAnim) {
+            activityInvoke.enterAnim = enterAnim;
+            activityInvoke.exitAnim = exitAnim;
+            return this;
+        }
+
+        public ActivityInvoke build() {
+            return checkParam() ? activityInvoke : null;
+        }
+
+        private boolean checkParam() {
+            return null != activityInvoke.clazz;
+        }
+
     }
 }

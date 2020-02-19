@@ -89,25 +89,38 @@ public class XRouter {
         return RouteIntent.newBuilder(uriStr);
     }
 
-    public void start(RouteIntent routeIntent) {
+    void start(RouteIntent routeIntent, int requestCode) {
         XRouteMeta routeMeta = mRouteModules.getRouteMeta(routeIntent.getModule(),
                 routeIntent.getPath());
         if (null == routeMeta) {
             return;
         }
-        String type = routeMeta.getType();
-        if (TextUtils.isEmpty(type)) {
+        RouteType routeType = routeMeta.getType();
+        if (null == routeType) {
             return;
         }
-        switch (type) {
-            case RouteType.ACTIVITY:
-                ActivityInvoke activityInvoke = new ActivityInvoke(routeMeta);
+        switch (routeType) {
+            case ACTIVITY:
+                ActivityInvoke activityInvoke = ActivityInvoke.newBuilder()
+                        .className(routeMeta.getClassName())
+                        .requestCode(requestCode)
+                        .action(routeIntent.getAction())
+                        .anim(routeIntent.getEnterAnim(), routeIntent.getExitAnim())
+                        .build();
+                if (null == activityInvoke) {
+                    Logger.w("ActivityInvoke build Failed checkYou class");
+                    return;
+                }
                 activityInvoke.invoke(sTopActivityRf.get(), routeIntent.getParamsMap());
                 break;
+            case METHOD:
+
+                break;
             default:
-                Logger.w("not support route type=" + type);
+                Logger.w("not support route type=" + routeType.name());
         }
     }
+
 
     public void addInterceptor(RouterInterceptor interceptor) {
         if (!mInterceptorList.contains(interceptor)) {

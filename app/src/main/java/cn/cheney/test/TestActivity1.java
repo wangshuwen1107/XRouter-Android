@@ -12,11 +12,12 @@ import cn.cheney.xrouter.core.XRouter;
 @XRoute(path = "/test1", module = "home")
 public class TestActivity1 extends AppCompatActivity {
 
+    public static final String TAG = TestActivity1.class.getSimpleName();
 
     //@Autowired
     @XParam(name = "testParam")
     Book book;
-    @XParam(name = "")
+
     String gogog;
 
     @Override
@@ -24,6 +25,7 @@ public class TestActivity1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test1);
         XRouter.getInstance().inject(this);
-        Log.i("test", "自动注入 name =" + book);
+        Log.i(TAG, "name =" + book
+                + " action=" + getIntent().getAction());
     }
 }

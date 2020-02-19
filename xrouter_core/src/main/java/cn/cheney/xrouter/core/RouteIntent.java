@@ -9,10 +9,13 @@ import java.util.Set;
 
 public class RouteIntent {
 
+    private Map<String, Object> paramsMap = new HashMap<>();
     private String module;
     private String path;
-    private Map<String, Object> paramsMap = new HashMap<>();
     private Uri uri;
+    private String action;
+    private int enterAnim = -1;
+    private int exitAnim = -1;
 
     RouteIntent(String uriStr) {
         parseUri(uriStr);
@@ -24,6 +27,22 @@ public class RouteIntent {
 
     public String getPath() {
         return path;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public int getEnterAnim() {
+        return enterAnim;
+    }
+
+    public int getExitAnim() {
+        return exitAnim;
     }
 
     public Map<String, Object> getParamsMap() {
@@ -73,9 +92,26 @@ public class RouteIntent {
             return this;
         }
 
-        public void start() {
-            XRouter.getInstance().start(this.mRouteIntent);
+        public Builder action(String action) {
+            this.mRouteIntent.action = action;
+            return this;
         }
+
+        public Builder anim(int enterAnim, int exitAnim) {
+            mRouteIntent.enterAnim = enterAnim;
+            mRouteIntent.exitAnim = exitAnim;
+            return this;
+        }
+
+        public void start() {
+            start(-1);
+        }
+
+        public void start(int requestCode) {
+            XRouter.getInstance().start(this.mRouteIntent, requestCode);
+        }
+
+
     }
 
 }
