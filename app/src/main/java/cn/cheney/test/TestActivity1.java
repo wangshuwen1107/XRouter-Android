@@ -14,7 +14,6 @@ public class TestActivity1 extends AppCompatActivity {
 
     public static final String TAG = TestActivity1.class.getSimpleName();
 
-    //@Autowired
     @XParam(name = "testParam")
     Book book;
 
@@ -25,7 +24,7 @@ public class TestActivity1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test1);
         XRouter.getInstance().inject(this);
-        Log.i(TAG, "name =" + book
-                + " action=" + getIntent().getAction());
+        Log.i(TAG, "name =" + book + " action=" + getIntent().getAction());
     }
+
 }

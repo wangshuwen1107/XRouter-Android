@@ -23,15 +23,7 @@
         </activity>
 
         <activity android:name="cn.cheney.test.TestActivity1">
-
-            <intent-filter>
-                <data
-                    android:host="m.aliyun.com"
-                    android:scheme="arouter" />
-            </intent-filter>
-
         </activity>
-        <activity android:name="cn.cheney.test.TestActivity2" />
 
     </application>
 

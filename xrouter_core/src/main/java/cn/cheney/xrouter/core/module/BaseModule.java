@@ -5,34 +5,31 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.cheney.xrouter.core.entity.XRouteMeta;
+import cn.cheney.xrouter.core.invok.Invokable;
 
 import static cn.cheney.xrouter.core.constant.GenerateFileConstant.MODULE_CLASS_PREFIX;
 
-public class BaseModule {
+public abstract class BaseModule {
 
     private String moduleName;
 
-    private Map<String, XRouteMeta> mMethodsMap = new HashMap<>();
+    private Map<String, Invokable> mMethodsMap = new HashMap<>();
 
     public BaseModule() {
-        this(null);
-    }
-
-    public BaseModule(String moduleName) {
+        moduleName = getName();
         if (TextUtils.isEmpty(moduleName)) {
             this.moduleName = generateDefaultModuleName();
-        } else {
-            this.moduleName = moduleName;
         }
         load(mMethodsMap);
     }
 
-    protected void load(Map<String, XRouteMeta> routeMap) {
-    }
+
+    public abstract String getName();
+
+    public abstract void load(Map<String, Invokable> routeMap);
 
 
-    public XRouteMeta getRouteMeta(String path) {
+    public Invokable getRouteMeta(String path) {
         if (TextUtils.isEmpty(path)) {
             return null;
         }

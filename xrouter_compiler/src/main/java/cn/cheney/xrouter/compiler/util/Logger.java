@@ -25,4 +25,11 @@ public class Logger {
         sMessager.printMessage(Diagnostic.Kind.ERROR, "XRouter>>>  " + msg);
     }
 
+    public static void w(String msg) {
+        if (null == sMessager) {
+            return;
+        }
+        sMessager.printMessage(Diagnostic.Kind.WARNING, "XRouter>>>  " + msg);
+    }
+
 }

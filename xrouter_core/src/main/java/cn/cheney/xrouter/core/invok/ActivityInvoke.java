@@ -11,30 +11,34 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import java.io.Serializable;
 import java.util.Map;
 
+import cn.cheney.xrouter.core.constant.RouteType;
 import cn.cheney.xrouter.core.exception.RouterException;
 
-public class ActivityInvoke extends Invokable<Integer> {
+public class ActivityInvoke extends Invokable {
 
-    private Intent intent;
-    private Class<? extends Activity> clazz;
-    private String action;
-    private int requestCode = -1;
-    private int enterAnim = -1;
-    private int exitAnim = -1;
 
-    public ActivityInvoke() {
+    public ActivityInvoke(RouteType type,
+                          Class<?> className,
+                          String module,
+                          String path) {
+        this.type = type;
+        this.path = path;
+        this.module = module;
+        this.clazz = className;
     }
 
+
     @Override
-    public Integer invoke(@Nullable Context context, @NonNull Map<String, Object> params) {
+    public Object invoke(@Nullable Context context,
+                         @NonNull Map<String, Object> params,
+                         int requestCode, int enterAnim, int exitAnim, String action) {
         if (null == context) {
             return -1;
         }
-        intent = new Intent(context, clazz);
+        Intent intent = new Intent(context, clazz);
         fillIntent(intent, params);
         if (!TextUtils.isEmpty(action)) {
             intent.setAction(action);
@@ -107,46 +111,4 @@ public class ActivityInvoke extends Invokable<Integer> {
         return intent;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-
-        private ActivityInvoke activityInvoke;
-
-        Builder() {
-            activityInvoke = new ActivityInvoke();
-        }
-
-        public Builder className(Class<? extends Activity> clazz) {
-            activityInvoke.clazz = clazz;
-            return this;
-        }
-
-        public Builder requestCode(int requestCode) {
-            activityInvoke.requestCode = requestCode;
-            return this;
-        }
-
-        public Builder action(String action) {
-            activityInvoke.action = action;
-            return this;
-        }
-
-        public Builder anim(int enterAnim, int exitAnim) {
-            activityInvoke.enterAnim = enterAnim;
-            activityInvoke.exitAnim = exitAnim;
-            return this;
-        }
-
-        public ActivityInvoke build() {
-            return checkParam() ? activityInvoke : null;
-        }
-
-        private boolean checkParam() {
-            return null != activityInvoke.clazz;
-        }
-
-    }
 }

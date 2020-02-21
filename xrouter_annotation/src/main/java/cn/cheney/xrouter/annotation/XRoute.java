@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface XRoute {
 
-    String path();
+    String path() default "";
 
     String module();
 

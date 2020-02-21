@@ -19,11 +19,13 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.compiler.generator.ModuleClassGenerator;
@@ -56,6 +58,7 @@ public class XRouterProcessor extends AbstractProcessor {
         HashSet<String> supportTypes = new LinkedHashSet<>();
         supportTypes.add(XRoute.class.getCanonicalName());
         supportTypes.add(XParam.class.getCanonicalName());
+        supportTypes.add(XMethod.class.getCanonicalName());
         return supportTypes;
     }
 
@@ -73,12 +76,15 @@ public class XRouterProcessor extends AbstractProcessor {
     }
 
 
-    private boolean checkParamRepeat(List<Element> elementList, Element element) {
-        String targetName = getParamName((VariableElement) element);
+    private boolean checkParamRepeat(List<Element> elementList, VariableElement element) {
+        String targetName = getParamName(element);
         if (null == targetName) {
             return false;
         }
         for (Element elementInList : elementList) {
+            if (!(elementInList instanceof VariableElement)) {
+                continue;
+            }
             String str = getParamName((VariableElement) elementInList);
             if (targetName.equals(str)) {
                 return true;
@@ -106,6 +112,10 @@ public class XRouterProcessor extends AbstractProcessor {
             return;
         }
         for (Element element : elementSet) {
+            Logger.d("processParams " + element.toString());
+            if (!element.getKind().equals(ElementKind.FIELD)) {
+                continue;
+            }
             VariableElement variableElement = (VariableElement) element;
             TypeElement activityClass = (TypeElement) variableElement.getEnclosingElement();
             String notAllowModifier = CheckUtil.checkModifiers(variableElement.getModifiers());
@@ -122,7 +132,7 @@ public class XRouterProcessor extends AbstractProcessor {
                 paramsElements = new ArrayList<>();
                 paramsMap.put(activityClass, paramsElements);
             }
-            if (checkParamRepeat(paramsElements, element)) {
+            if (checkParamRepeat(paramsElements, variableElement)) {
                 Logger.e("The  inject  fields Repeat !!! please check field["
                         + element.getSimpleName()
                         + "] in class ["
@@ -155,11 +165,11 @@ public class XRouterProcessor extends AbstractProcessor {
         if (null == elementSet || elementSet.isEmpty()) {
             return;
         }
+        //route class List 遍历
         for (Element element : elementSet) {
             TypeElement typeElement = (TypeElement) element;
             XRoute route = element.getAnnotation(XRoute.class);
             String module = route.module();
-            String path = route.path();
             ModuleClassGenerator groupClassGenerator;
             if (!moduleMap.containsKey(module)) {
                 groupClassGenerator = new ModuleClassGenerator(module);
@@ -167,13 +177,8 @@ public class XRouterProcessor extends AbstractProcessor {
             } else {
                 groupClassGenerator = moduleMap.get(route.module());
             }
-            groupClassGenerator.generateSeg(holder, typeElement, module, path);
+            groupClassGenerator.generateSeg(holder, typeElement, route.path());
         }
-        generateFile();
-    }
-
-
-    private void generateFile() {
         for (Map.Entry<String, ModuleClassGenerator> entry : moduleMap.entrySet()) {
             ModuleClassGenerator groupClassGenerator = entry.getValue();
             groupClassGenerator.generateJavaFile(holder.filer);

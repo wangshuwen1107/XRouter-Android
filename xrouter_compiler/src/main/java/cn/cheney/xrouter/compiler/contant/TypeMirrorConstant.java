@@ -15,4 +15,10 @@ public class TypeMirrorConstant {
     public static final String SERIALIZABLE = "java.io.Serializable";
     //android
     public static final String PARCELABLE = "android.os.Parcelable";
+    public static final String ACTIVITY = "android.app.Activity";
+    public static final String CONTEXT = "android.content.Context";
+    //XRouter
+    public static final String IMETHOD = "cn.cheney.xrouter.core.method.IMethod";
+
+
 }

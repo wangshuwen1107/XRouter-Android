@@ -4,6 +4,6 @@ apply plugin: 'java'
 dependencies {
     implementation project(":xrouter_annotation")
     implementation project(":xrouter_core")
-    implementation 'com.google.auto.service:auto-service:1.0-rc3'
+    implementation 'com.google.auto.service:auto-service:1.0-rc4'
     implementation 'com.squareup:javapoet:1.8.0'
 }

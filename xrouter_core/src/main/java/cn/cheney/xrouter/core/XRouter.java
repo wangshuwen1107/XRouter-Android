@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.cheney.xrouter.core.constant.RouteType;
-import cn.cheney.xrouter.core.entity.XRouteMeta;
 import cn.cheney.xrouter.core.exception.RouterException;
 import cn.cheney.xrouter.core.invok.ActivityInvoke;
+import cn.cheney.xrouter.core.invok.Invokable;
 import cn.cheney.xrouter.core.module.RouteModuleManager;
 import cn.cheney.xrouter.core.syringe.Syringe;
 import cn.cheney.xrouter.core.syringe.SyringeManager;
@@ -89,38 +89,6 @@ public class XRouter {
         return RouteIntent.newBuilder(uriStr);
     }
 
-    void start(RouteIntent routeIntent, int requestCode) {
-        XRouteMeta routeMeta = mRouteModules.getRouteMeta(routeIntent.getModule(),
-                routeIntent.getPath());
-        if (null == routeMeta) {
-            return;
-        }
-        RouteType routeType = routeMeta.getType();
-        if (null == routeType) {
-            return;
-        }
-        switch (routeType) {
-            case ACTIVITY:
-                ActivityInvoke activityInvoke = ActivityInvoke.newBuilder()
-                        .className(routeMeta.getClassName())
-                        .requestCode(requestCode)
-                        .action(routeIntent.getAction())
-                        .anim(routeIntent.getEnterAnim(), routeIntent.getExitAnim())
-                        .build();
-                if (null == activityInvoke) {
-                    Logger.w("ActivityInvoke build Failed checkYou class");
-                    return;
-                }
-                activityInvoke.invoke(sTopActivityRf.get(), routeIntent.getParamsMap());
-                break;
-            case METHOD:
-
-                break;
-            default:
-                Logger.w("not support route type=" + routeType.name());
-        }
-    }
-
 
     public void addInterceptor(RouterInterceptor interceptor) {
         if (!mInterceptorList.contains(interceptor)) {
@@ -128,8 +96,41 @@ public class XRouter {
         }
     }
 
+
+    void start(RouteIntent routeIntent, int requestCode) {
+        Invokable invokable = mRouteModules.getRouteMeta(routeIntent.getModule(),
+                routeIntent.getPath());
+        if (null == invokable) {
+            return;
+        }
+        RouteType routeType = invokable.getType();
+        if (null == routeType) {
+            return;
+        }
+        switch (routeType) {
+            case ACTIVITY:
+                ActivityInvoke activityInvoke = (ActivityInvoke) invokable;
+                activityInvoke.invoke(sTopActivityRf.get(),
+                        routeIntent.getParamsMap(),
+                        requestCode,
+                        routeIntent.getEnterAnim(),
+                        routeIntent.getExitAnim(),
+                        routeIntent.getAction());
+                break;
+            case METHOD:
+                invokable.invoke(sTopActivityRf.get(), routeIntent.getParamsMap());
+                break;
+            default:
+                Logger.w("not support route type=" + routeType.name());
+        }
+    }
+
+
+
+
     private static String getUriSite(Uri uri) {
         return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
     }
+
 
 }
