@@ -18,11 +18,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-                XRouter.build("home/test1")
+
+               XRouter.build("home/test1")
                         .put("testParam", book)
                         .action("cn.cheney.xrouter")
                         .anim(R.anim.enter_bottom, R.anim.exit_bottom)
                         .start(1000);
+
+
             }
         });
     }

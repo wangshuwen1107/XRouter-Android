@@ -126,8 +126,6 @@ public class XRouter {
     }
 
 
-
-
     private static String getUriSite(Uri uri) {
         return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
     }
