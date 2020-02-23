@@ -31,7 +31,6 @@ import cn.cheney.xrouter.core.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.constant.RouteType;
 import cn.cheney.xrouter.core.invok.ActivityInvoke;
 import cn.cheney.xrouter.core.invok.Invokable;
-import cn.cheney.xrouter.core.invok.MethodInvokable;
 import cn.cheney.xrouter.core.module.BaseModule;
 
 public class ModuleClassGenerator {
@@ -138,8 +137,8 @@ public class ModuleClassGenerator {
                     methodElement.getSimpleName()));
             return;
         }
-        TypeMirror typeMirror = methodElement.getReturnType();
-        boolean isReturnVoid = TypeKind.VOID.equals(typeMirror.getKind());
+        TypeMirror returnType = methodElement.getReturnType();
+        boolean isReturnVoid = TypeKind.VOID.equals(returnType.getKind());
 
         List<? extends VariableElement> parameters = methodElement.getParameters();
         List<Object> paramsSegList = new ArrayList<>();
@@ -173,10 +172,19 @@ public class ModuleClassGenerator {
             }
 
         }
+        //返回类型的泛型className
+        ClassName returnClassName;
+        if (!isReturnVoid){
+            returnClassName = ClassName.bestGuess(returnType.toString());
+        }else {
+            returnClassName = ClassName.bestGuess("java.lang.Void");
+        }
+        ParameterizedTypeName methodInvokableType =
+                ParameterizedTypeName.get(ClassName.get("cn.cheney.xrouter.core.invok", "MethodInvokable"),returnClassName);
         /*
-         *   new MethodInvokable(RouteType.METHOD,YourClass.class,module,path) {
+         *   new MethodInvokable(RouteType.METHOD,You   rClass.class,module,path) {
          *       @Override
-         *       public Objstect invoke(Context context, Map<String, Object> params) {
+         *       public Object setInvokable(Context context, Map<String, Object> params) {
          *         return YourClass.YourMethod(params.get(yourKey));
          *       }
          *     }
@@ -190,16 +198,16 @@ public class ModuleClassGenerator {
                         ClassName.get(String.class),
                         ClassName.get(Object.class)), "params")
                 .addStatement(paramSeg.toString(), paramsSegList.toArray())
-                .returns(Object.class);
+                .returns(returnClassName);
 
         if (isReturnVoid) {
-            invokeBuilder.addStatement("return $T.TYPE", Void.class);
+            invokeBuilder.addStatement("return null");
         }
 
         String methodInvokeClassStr = "$T.METHOD,$T.class,$S,$S";
         TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr,
                 RouteType.class, classType, module, xMethod.name())
-                .addSuperinterface(MethodInvokable.class)
+                .addSuperinterface(methodInvokableType)
                 .addMethod(invokeBuilder.build())
                 .build();
         loadMethodBuilder.addStatement("$L.put($S,$L)", "routeMap", xMethod.name(), methodInvoke);

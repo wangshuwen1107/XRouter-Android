@@ -17,7 +17,7 @@ import java.util.Map;
 import cn.cheney.xrouter.core.constant.RouteType;
 import cn.cheney.xrouter.core.exception.RouterException;
 
-public class ActivityInvoke extends Invokable {
+public class ActivityInvoke extends Invokable<Integer> {
 
 
     public ActivityInvoke(RouteType type,
@@ -32,9 +32,9 @@ public class ActivityInvoke extends Invokable {
 
 
     @Override
-    public Object invoke(@Nullable Context context,
-                         @NonNull Map<String, Object> params,
-                         int requestCode, int enterAnim, int exitAnim, String action) {
+    public Integer invoke(@Nullable Context context,
+                          @NonNull Map<String, Object> params,
+                          int requestCode, int enterAnim, int exitAnim, String action) {
         if (null == context) {
             return -1;
         }
@@ -46,7 +46,7 @@ public class ActivityInvoke extends Invokable {
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-            return 1;
+            return requestCode >= 0 ? requestCode : 1;
         }
         Activity activity = ((Activity) context);
         if (requestCode >= 0) {
@@ -58,7 +58,7 @@ public class ActivityInvoke extends Invokable {
             activity.overridePendingTransition(enterAnim >= 0 ? enterAnim : -1,
                     enterAnim >= 0 ? enterAnim : -1);
         }
-        return 1;
+        return requestCode >= 0 ? requestCode : 1;
     }
 
     private static Intent fillIntent(Intent intent, Map<String, Object> params) {

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import cn.cheney.xrouter.core.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.invok.Invokable;
-import cn.cheney.xrouter.core.util.Logger;
 
 public class RouteModuleManager {
 
@@ -32,14 +31,12 @@ public class RouteModuleManager {
                 e.printStackTrace();
             }
         }
-        Logger.d("getModule  module name=" + moduleName + " entity=" + baseModule);
         return baseModule;
     }
 
     public Invokable getRouteMeta(String moduleName, String uriPath) {
         BaseModule module = getModule(moduleName);
         if (null == module) {
-            Logger.w("getRouteMeta  module name=" + moduleName + " not found ");
             return null;
         }
         return module.getRouteMeta(uriPath);

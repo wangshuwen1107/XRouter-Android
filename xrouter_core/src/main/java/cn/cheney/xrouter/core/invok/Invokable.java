@@ -10,7 +10,7 @@ import java.util.Map;
 import cn.cheney.xrouter.core.constant.RouteType;
 
 
-public abstract class Invokable {
+public abstract class Invokable<T> {
 
     String path;
     RouteType type;
@@ -18,11 +18,11 @@ public abstract class Invokable {
     Class<?> clazz;
 
 
-    public Object invoke(@Nullable Context context, @NonNull Map<String, Object> params) {
+    public T invoke(@Nullable Context context, @NonNull Map<String, Object> params) {
         return null;
     }
 
-    public Object invoke(@Nullable Context context, @NonNull Map<String, Object> params,
+    public T invoke(@Nullable Context context, @NonNull Map<String, Object> params,
                          int requestCode, int enterAnim, int exitAnim, String action) {
         return null;
     }
