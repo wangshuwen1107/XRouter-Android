@@ -152,16 +152,32 @@ public class ModuleClassGenerator {
             paramSeg.append("return $T.$L(");
         }
         if (null != parameters && !parameters.isEmpty()) {
+            boolean hasCallback = false;
             for (VariableElement variableElement : parameters) {
                 TypeMirror methodParamType = variableElement.asType();
                 String key;
                 XParam xParam = variableElement.getAnnotation(XParam.class);
-                if (null != xParam && !xParam.name().isEmpty()) {
-                    key = xParam.name();
+                if (variableElement.asType().toString().equals(TypeMirrorConstant.CALLBACK)) {
+                    if (hasCallback) {
+                        Logger.e(String.format("[%s] [%s] only one RouteCallback !!",
+                                classType.getQualifiedName(),
+                                methodElement.getSimpleName()));
+                        return;
+                    }
+                    key = GenerateFileConstant.CALLBACK_KEY;
+                    hasCallback = true;
                 } else {
-                    key = variableElement.getSimpleName().toString();
+                    if (null != xParam && !xParam.name().isEmpty()) {
+                        key = xParam.name();
+                    } else {
+                        key = variableElement.getSimpleName().toString();
+                    }
+                    if (key.equals(GenerateFileConstant.CALLBACK_KEY)) {
+                        Logger.e(String.format("[%s] [%s] have illegal key ROUTE_CALLBACK",
+                                classType.getQualifiedName(),
+                                methodElement.getSimpleName()));
+                    }
                 }
-
                 if (parameters.indexOf(variableElement) == parameters.size() - 1) {
                     paramSeg.append("($T)params.get($S))");
                 } else {
@@ -170,19 +186,18 @@ public class ModuleClassGenerator {
                 paramsSegList.add(methodParamType);
                 paramsSegList.add(key);
             }
-
         }
         //返回类型的泛型className
         ClassName returnClassName;
-        if (!isReturnVoid){
+        if (!isReturnVoid) {
             returnClassName = ClassName.bestGuess(returnType.toString());
-        }else {
+        } else {
             returnClassName = ClassName.bestGuess("java.lang.Void");
         }
         ParameterizedTypeName methodInvokableType =
-                ParameterizedTypeName.get(ClassName.get("cn.cheney.xrouter.core.invok", "MethodInvokable"),returnClassName);
+                ParameterizedTypeName.get(ClassName.get("cn.cheney.xrouter.core.invok", "MethodInvokable"), returnClassName);
         /*
-         *   new MethodInvokable(RouteType.METHOD,You   rClass.class,module,path) {
+         *   new MethodInvokable(RouteType.METHOD,YourClazz.class,module,path) {
          *       @Override
          *       public Object setInvokable(Context context, Map<String, Object> params) {
          *         return YourClass.YourMethod(params.get(yourKey));
@@ -203,7 +218,6 @@ public class ModuleClassGenerator {
         if (isReturnVoid) {
             invokeBuilder.addStatement("return null");
         }
-
         String methodInvokeClassStr = "$T.METHOD,$T.class,$S,$S";
         TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr,
                 RouteType.class, classType, module, xMethod.name())

@@ -1,9 +1,6 @@
 package cn.cheney.xrouter.core.invok;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Map;
 
@@ -18,14 +15,10 @@ public abstract class Invokable<T> {
     Class<?> clazz;
 
 
-    public T invoke(@Nullable Context context, @NonNull Map<String, Object> params) {
+    public T invoke(@NonNull Map<String, Object> params) {
         return null;
     }
 
-    public T invoke(@Nullable Context context, @NonNull Map<String, Object> params,
-                         int requestCode, int enterAnim, int exitAnim, String action) {
-        return null;
-    }
 
     public RouteType getType() {
         return type;

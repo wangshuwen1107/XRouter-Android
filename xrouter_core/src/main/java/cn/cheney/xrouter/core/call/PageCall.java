@@ -28,7 +28,6 @@ public class PageCall extends BaseCall<ActivityInvoke, Integer> {
         return exitAnim;
     }
 
-
     public int getRequestCode() {
         return requestCode;
     }
@@ -56,6 +55,10 @@ public class PageCall extends BaseCall<ActivityInvoke, Integer> {
     }
 
     @Override
+    public Integer call() {
+        return call(XRouter.getInstance().getTopActivity());
+    }
+
     public Integer call(Context context) {
         XRouter.getInstance().setInvokable(this);
         if (null == invokable) {

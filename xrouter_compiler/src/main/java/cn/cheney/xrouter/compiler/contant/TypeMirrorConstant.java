@@ -19,6 +19,7 @@ public class TypeMirrorConstant {
     public static final String CONTEXT = "android.content.Context";
     //XRouter
     public static final String IMETHOD = "cn.cheney.xrouter.core.method.IMethod";
+    public static final String CALLBACK = "cn.cheney.xrouter.core.RouteCallback";
 
 
 }

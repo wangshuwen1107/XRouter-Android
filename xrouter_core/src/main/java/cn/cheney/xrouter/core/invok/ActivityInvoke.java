@@ -30,8 +30,6 @@ public class ActivityInvoke extends Invokable<Integer> {
         this.clazz = className;
     }
 
-
-    @Override
     public Integer invoke(@Nullable Context context,
                           @NonNull Map<String, Object> params,
                           int requestCode, int enterAnim, int exitAnim, String action) {

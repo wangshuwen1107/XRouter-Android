@@ -1,6 +1,5 @@
 package cn.cheney.xrouter.core.call;
 
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -73,11 +72,6 @@ public abstract class BaseCall<I extends Invokable, R> {
         return (C) this;
     }
 
-    public abstract R call(Context context);
-
-    public R call() {
-        return call(XRouter.getInstance().getTopActivity());
-    }
-
+    public abstract R call();
 
 }

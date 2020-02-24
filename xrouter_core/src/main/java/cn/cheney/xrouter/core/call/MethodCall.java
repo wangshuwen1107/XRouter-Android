@@ -1,8 +1,8 @@
 package cn.cheney.xrouter.core.call;
 
-import android.content.Context;
-
+import cn.cheney.xrouter.core.RouteCallback;
 import cn.cheney.xrouter.core.XRouter;
+import cn.cheney.xrouter.core.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.invok.MethodInvokable;
 
 public class MethodCall<R> extends BaseCall<MethodInvokable<R>, R> {
@@ -12,12 +12,17 @@ public class MethodCall<R> extends BaseCall<MethodInvokable<R>, R> {
     }
 
     @Override
-    public R call(Context context) {
+    public R call() {
         XRouter.getInstance().setInvokable(this);
         if (null == invokable) {
             return null;
         }
-        return invokable.invoke(context, paramsMap);
+        return invokable.invoke(paramsMap);
+    }
+
+    public R call(RouteCallback callback) {
+        this.paramsMap.put(GenerateFileConstant.CALLBACK_KEY, callback);
+        return call();
     }
 
     public MethodCall<R> put(String key, Object val) {
