@@ -13,8 +13,7 @@ public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
 
     @Override
     public R call() {
-        XRouter.getInstance().buildInvok(this);
-        if (null == invokable) {
+        if (!XRouter.getInstance().build(this)) {
             return null;
         }
         return invokable.invoke(paramsMap);
@@ -22,7 +21,11 @@ public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
 
     public R call(RouteCallback callback) {
         this.paramsMap.put(GenerateFileConstant.CALLBACK_KEY, callback);
-        return call();
+        if (!XRouter.getInstance().build(this)) {
+            callback.onResult(null);
+            return null;
+        }
+        return invokable.invoke(paramsMap);
     }
 
     public MethodCall<R> put(String key, Object val) {

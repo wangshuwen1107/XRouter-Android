@@ -201,7 +201,7 @@ public class ModuleClassGenerator {
         /*
          *   new MethodInvokable(RouteType.METHOD,YourClazz.class,module,path) {
          *       @Override
-         *       public Object buildInvok(Context context, Map<String, Object> params) {
+         *       public Object build(Context context, Map<String, Object> params) {
          *         return YourClass.YourMethod(params.get(yourKey));
          *       }
          *     }

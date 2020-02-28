@@ -5,6 +5,8 @@ import android.app.Application;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.call.PageCall;
+import cn.cheney.xrouter.core.exception.RouterErrorHandler;
 import cn.cheney.xrouter.core.exception.RouterException;
 import cn.cheney.xrouter.core.interceptor.BuildInvokeInterceptor;
 import cn.cheney.xrouter.core.interceptor.RealChain;
@@ -88,31 +91,46 @@ public class XRouter {
         syringe.inject(activity);
     }
 
-    public static PageCall page(String uriStr) {
+    public static PageCall page(@NonNull String uriStr) {
         return new PageCall(uriStr);
     }
 
 
-    public static <R> MethodCall<R> method(String uriStr) {
+    public static <R> MethodCall<R> method(@NonNull String uriStr) {
         return new MethodCall<>(uriStr);
     }
 
-
-    public void buildInvok(BaseCall call) {
+    public boolean build(BaseCall call) {
         mInterceptorList.add(new BuildInvokeInterceptor());
         RealChain realChain = new RealChain(call, mInterceptorList);
         Invokable invokable = realChain.proceed(call);
+        if (null == invokable) {
+            return false;
+        }
         call.setInvokable(invokable);
-    }
-
-    public Activity getTopActivity() {
-        return sTopActivityRf.get();
+        return true;
     }
 
     public void addInterceptor(RouterInterceptor interceptor) {
         if (!mInterceptorList.contains(interceptor)) {
             mInterceptorList.add(interceptor);
         }
+    }
+
+    private RouterErrorHandler mErrorHandler;
+
+    public void setErroHandler(RouterErrorHandler errorHandler) {
+        this.mErrorHandler = errorHandler;
+    }
+
+    public void onError(String url, String errorMsg) {
+        if (null != mErrorHandler) {
+            mErrorHandler.onError(url, errorMsg);
+        }
+    }
+
+    public Activity getTopActivity() {
+        return sTopActivityRf.get();
     }
 
     public RouteModuleManager getRouteModules() {
@@ -122,6 +140,5 @@ public class XRouter {
     private static String getUriSite(Uri uri) {
         return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
     }
-
 
 }

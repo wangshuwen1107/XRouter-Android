@@ -25,5 +25,11 @@
         android:layout_height="wrap_content"
         android:text="异步调用" />
 
+    <Button
+        android:id="@+id/btn4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="错误协议调用" />
+
 
 </LinearLayout>

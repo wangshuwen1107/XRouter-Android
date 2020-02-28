@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 Logger.d("getSyncBookName bookReturn= " + bookReturn);
             }
         });
+
         findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +57,23 @@ public class MainActivity extends AppCompatActivity {
                                 Logger.d("getAsyncBookName bookReturn= " + result);
                             }
                         });
+            }
+        });
 
+        findViewById(R.id.btn4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Book book = new Book();
+                book.name = "Kotlin";
+                Book bookError = XRouter.<Book>method(null)
+                        .put("book", book)
+                        .call(new RouteCallback() {
+                            @Override
+                            public void onResult(Map<String, Object> result) {
+                                Logger.d("getaaa bookReturn= " + result);
+                            }
+                        });
+                Logger.d("getaaa bookError= " + bookError);
             }
         });
     }

@@ -14,7 +14,7 @@ public class BuildInvokeInterceptor implements RouterInterceptor {
         Invokable invokable = XRouter.getInstance().getRouteModules().getRouteMeta(call.getModule(),
                 call.getPath());
         if (null == invokable) {
-            chain.shutDown("url=" + call.getUri().toString() + "Can`t Find Invokable");
+            chain.shutDown("url=" + call.getUri().toString() + " Can`t Find Invokable");
             return null;
         }
         RouteType routeType = invokable.getType();
@@ -28,7 +28,7 @@ public class BuildInvokeInterceptor implements RouterInterceptor {
                 return invokable;
             default:
                 chain.shutDown("Url=" + call.getUri().toString()
-                        + "not support route type=" + routeType.name());
+                        + " not support route type=" + routeType.name());
         }
         return null;
     }

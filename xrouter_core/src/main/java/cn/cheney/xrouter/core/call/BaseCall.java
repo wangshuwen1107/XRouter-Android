@@ -48,6 +48,7 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
 
     private void parseUri(String uriStr) {
         if (TextUtils.isEmpty(uriStr)) {
+            uri = Uri.EMPTY;
             return;
         }
         uri = Uri.parse(uriStr);
