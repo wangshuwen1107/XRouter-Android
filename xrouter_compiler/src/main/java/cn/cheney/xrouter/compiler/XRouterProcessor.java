@@ -51,7 +51,6 @@ public class XRouterProcessor extends AbstractProcessor {
         holder.types = processingEnv.getTypeUtils();
         holder.typeUtils = new TypeUtils(holder.types, holder.elementUtils);
         Logger.init(holder.messager);
-//        Logger.d("init called ---- apt Pid=" + Process.myPid());
     }
 
     @Override
@@ -113,7 +112,6 @@ public class XRouterProcessor extends AbstractProcessor {
             return;
         }
         for (Element element : elementSet) {
-            Logger.d("processParams " + element.toString());
             if (!element.getKind().equals(ElementKind.FIELD)) {
                 continue;
             }
@@ -193,6 +191,7 @@ public class XRouterProcessor extends AbstractProcessor {
         public Types types;
         public Filer filer;
         public TypeUtils typeUtils;
+
     }
 
 

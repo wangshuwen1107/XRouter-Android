@@ -12,9 +12,20 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
+
+    signingConfigs {
+        release {
+            storeFile file('keystore')
+            storePassword 'wangshuwen123'
+            keyAlias 'xrouter'
+            keyPassword 'wangshuwen123'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
