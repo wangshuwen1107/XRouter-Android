@@ -21,4 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class cn.cheney.xrouter.XRoute$$*
--keep class * implements Syringe
+-keep class * implements cn.cheney.xrouter.core.syringe.Syringe {*;}
