@@ -61,7 +61,6 @@ public class PageCall extends BaseCall<Integer, ActivityInvoke> {
     }
 
     public Integer call(Context context) {
-        XRouter.getInstance().build(this);
         if (!XRouter.getInstance().build(this)) {
             return null;
         }

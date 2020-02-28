@@ -1,8 +1,8 @@
 package cn.cheney.xrouter.core.interceptor;
 
+import cn.cheney.xrouter.constant.RouteType;
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.call.BaseCall;
-import cn.cheney.xrouter.core.constant.RouteType;
 import cn.cheney.xrouter.core.invok.Invokable;
 
 public class BuildInvokeInterceptor implements RouterInterceptor {

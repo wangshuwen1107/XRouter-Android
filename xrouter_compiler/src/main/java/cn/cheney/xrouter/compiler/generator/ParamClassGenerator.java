@@ -12,12 +12,13 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.compiler.XRouterProcessor;
 import cn.cheney.xrouter.compiler.contant.TypeKind;
-import cn.cheney.xrouter.core.constant.GenerateFileConstant;
-import cn.cheney.xrouter.core.syringe.Syringe;
+import cn.cheney.xrouter.compiler.contant.XTypeMirror;
+import cn.cheney.xrouter.constant.GenerateFileConstant;
 
 public class ParamClassGenerator {
 
@@ -40,8 +41,10 @@ public class ParamClassGenerator {
      */
     public void generateJavaFile(XRouterProcessor.Holder holder) {
         Name qualifiedName = holder.elementUtils.getPackageOf(activityElement).getQualifiedName();
+        TypeMirror syringeType = holder.elementUtils
+                .getTypeElement(XTypeMirror.SYRINGE).asType();
         TypeSpec typeSpec = TypeSpec.classBuilder(fileName)
-                .addSuperinterface(Syringe.class)
+                .addSuperinterface(TypeName.get(syringeType))
                 .addJavadoc(GenerateFileConstant.WARNING_TIPS)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodBuilder.build())

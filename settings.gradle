@@ -1,2 +1,2 @@
-include ':app', ':xrouter_core', ':xrouter_compiler', ':xrouter_annotation'
+include ':app', ':xrouter_core', ':xrouter_compiler', ':xrouter_annotation', ':m_test'
 rootProject.name='XRoute'

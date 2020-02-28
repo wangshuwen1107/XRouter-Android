@@ -1,4 +1,4 @@
-package cn.cheney.test;
+package cn.cheney.app;
 
 import android.util.Log;
 
@@ -11,18 +11,18 @@ import cn.cheney.xrouter.core.RouteCallback;
 import cn.cheney.xrouter.core.method.IMethod;
 
 @XRoute(module = "home")
-public class TestMethod implements IMethod {
+public class HomeMethod implements IMethod {
 
-    private static final String TAG = TestMethod.class.getSimpleName();
+    private static final String TAG = HomeMethod.class.getSimpleName();
 
-    @XMethod(name = "/getBookName")
+    @XMethod(name = "getBookName")
     public static Book getBookName(@XParam(name = "book") Book book) {
         Log.i(TAG, "getBookName  =" + book);
         return book;
     }
 
 
-    @XMethod(name = "/getAsyncBookName")
+    @XMethod(name = "getAsyncBookName")
     public static void getAsyncBookName(@XParam(name = "book") Book book, RouteCallback callback) {
         Log.i(TAG, "getBookName  =" + book);
         HashMap<String, Object> map = new HashMap<>();
@@ -32,8 +32,9 @@ public class TestMethod implements IMethod {
 
 
     @XRoute(module = "home2")
-    public static class TestMethod2 implements IMethod{
-        @XMethod(name = "/getBookName")
+    public static class TestMethod2 implements IMethod {
+
+        @XMethod(name = "getBookName")
         public static Book getBookName(@XParam(name = "book") Book book) {
             Log.i(TAG, "getBookName  =" + book);
             return book;

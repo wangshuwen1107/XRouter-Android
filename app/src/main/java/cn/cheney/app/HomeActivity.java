@@ -1,4 +1,4 @@
-package cn.cheney.test;
+package cn.cheney.app;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,10 +9,10 @@ import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute(path = "/test1", module = "home")
-public class TestActivity1 extends AppCompatActivity {
+@XRoute(path = "page", module = "home")
+public class HomeActivity extends AppCompatActivity {
 
-    public static final String TAG = TestActivity1.class.getSimpleName();
+    public static final String TAG = HomeActivity.class.getSimpleName();
 
     @XParam(name = "testParam")
     Book book;

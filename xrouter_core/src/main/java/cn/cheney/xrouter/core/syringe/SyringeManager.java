@@ -3,7 +3,8 @@ package cn.cheney.xrouter.core.syringe;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.cheney.xrouter.core.constant.GenerateFileConstant.PARAM_FILE_PREFIX;
+import static cn.cheney.xrouter.constant.GenerateFileConstant.PARAM_FILE_PREFIX;
+
 
 public class SyringeManager {
 

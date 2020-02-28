@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.cheney.xrouter.core.constant.GenerateFileConstant;
+import cn.cheney.xrouter.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.invok.Invokable;
 
 public class RouteModuleManager {

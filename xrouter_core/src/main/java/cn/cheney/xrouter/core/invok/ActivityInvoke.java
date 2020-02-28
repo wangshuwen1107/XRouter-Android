@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 
-import cn.cheney.xrouter.core.constant.RouteType;
+import cn.cheney.xrouter.constant.RouteType;
 import cn.cheney.xrouter.core.exception.RouterException;
 
 public class ActivityInvoke extends Invokable<Integer> {

@@ -1,6 +1,6 @@
 package cn.cheney.xrouter.compiler.contant;
 
-public class TypeMirrorConstant {
+public class XTypeMirror {
     //java
     private static final String LANG = "java.lang";
     public static final String BYTE = LANG + ".Byte";
@@ -18,8 +18,12 @@ public class TypeMirrorConstant {
     public static final String ACTIVITY = "android.app.Activity";
     public static final String CONTEXT = "android.content.Context";
     //XRouter
-    public static final String IMETHOD = "cn.cheney.xrouter.core.method.IMethod";
+    public static final String I_METHOD = "cn.cheney.xrouter.core.method.IMethod";
     public static final String CALLBACK = "cn.cheney.xrouter.core.RouteCallback";
+    public static final String BASEMODULE = "cn.cheney.xrouter.core.module.BaseModule";
+    public static final String INVOKABLE = "cn.cheney.xrouter.core.invok.Invokable";
+    public static final String ACTIVITY_INVOKE = "cn.cheney.xrouter.core.invok.ActivityInvoke";
+    public static final String SYRINGE = "cn.cheney.xrouter.core.syringe.Syringe";
 
 
 }

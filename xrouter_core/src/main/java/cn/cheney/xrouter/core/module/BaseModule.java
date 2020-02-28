@@ -7,7 +7,8 @@ import java.util.Map;
 
 import cn.cheney.xrouter.core.invok.Invokable;
 
-import static cn.cheney.xrouter.core.constant.GenerateFileConstant.MODULE_CLASS_PREFIX;
+import static cn.cheney.xrouter.constant.GenerateFileConstant.MODULE_CLASS_PREFIX;
+
 
 public abstract class BaseModule {
 

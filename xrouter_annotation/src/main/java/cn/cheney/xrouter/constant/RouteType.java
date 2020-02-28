@@ -1,4 +1,4 @@
-package cn.cheney.xrouter.core.constant;
+package cn.cheney.xrouter.constant;
 
 public enum RouteType {
     ACTIVITY,

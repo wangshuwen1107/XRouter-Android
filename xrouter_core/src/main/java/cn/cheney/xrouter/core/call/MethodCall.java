@@ -1,8 +1,8 @@
 package cn.cheney.xrouter.core.call;
 
+import cn.cheney.xrouter.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.RouteCallback;
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.invok.MethodInvokable;
 
 public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {

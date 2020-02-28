@@ -1,4 +1,4 @@
-package cn.cheney.test;
+package cn.cheney.app;
 
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-                Integer requestCode = XRouter.page("home/test1")
+                Integer requestCode = XRouter.page("home/page")
                         .put("testParam", book)
                         .action("cn.cheney.xrouter")
                         .anim(R.anim.enter_bottom, R.anim.exit_bottom)
@@ -74,6 +74,22 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                 Logger.d("getaaa bookError= " + bookError);
+            }
+        });
+
+        findViewById(R.id.btn5).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Book book = new Book();
+                book.name = "Kotlin";
+                Integer requestCode = XRouter.page("test/page1")
+                        .action("cn.cheney.xrouter")
+                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
+                        .requestCode(1000)
+                        .call();
+
+                Logger.d("Route test Module page1 requestCode= " + requestCode);
+
             }
         });
     }

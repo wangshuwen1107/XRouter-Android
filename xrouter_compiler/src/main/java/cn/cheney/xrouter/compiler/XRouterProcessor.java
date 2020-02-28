@@ -51,6 +51,7 @@ public class XRouterProcessor extends AbstractProcessor {
         holder.types = processingEnv.getTypeUtils();
         holder.typeUtils = new TypeUtils(holder.types, holder.elementUtils);
         Logger.init(holder.messager);
+//        Logger.d("init called ---- apt Pid=" + Process.myPid());
     }
 
     @Override
@@ -172,16 +173,16 @@ public class XRouterProcessor extends AbstractProcessor {
             String module = route.module();
             ModuleClassGenerator groupClassGenerator;
             if (!moduleMap.containsKey(module)) {
-                groupClassGenerator = new ModuleClassGenerator(module);
+                groupClassGenerator = new ModuleClassGenerator(module, holder);
                 moduleMap.put(module, groupClassGenerator);
             } else {
                 groupClassGenerator = moduleMap.get(route.module());
             }
-            groupClassGenerator.generateSeg(holder, typeElement, route.path());
+            groupClassGenerator.generateSeg(typeElement, route.path());
         }
         for (Map.Entry<String, ModuleClassGenerator> entry : moduleMap.entrySet()) {
             ModuleClassGenerator groupClassGenerator = entry.getValue();
-            groupClassGenerator.generateJavaFile(holder.filer);
+            groupClassGenerator.generateJavaFile();
         }
     }
 

@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Map;
 
-import cn.cheney.xrouter.core.constant.RouteType;
+import cn.cheney.xrouter.constant.RouteType;
 
 
 public abstract class Invokable<R> {

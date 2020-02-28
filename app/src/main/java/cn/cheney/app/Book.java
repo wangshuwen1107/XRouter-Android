@@ -1,4 +1,4 @@
-package cn.cheney.test;
+package cn.cheney.app;
 
 import android.os.Parcel;
 import android.os.Parcelable;

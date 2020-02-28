@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -25,13 +24,10 @@ import javax.lang.model.type.TypeMirror;
 import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.compiler.XRouterProcessor;
-import cn.cheney.xrouter.compiler.contant.TypeMirrorConstant;
+import cn.cheney.xrouter.compiler.contant.XTypeMirror;
 import cn.cheney.xrouter.compiler.util.Logger;
-import cn.cheney.xrouter.core.constant.GenerateFileConstant;
-import cn.cheney.xrouter.core.constant.RouteType;
-import cn.cheney.xrouter.core.invok.ActivityInvoke;
-import cn.cheney.xrouter.core.invok.Invokable;
-import cn.cheney.xrouter.core.module.BaseModule;
+import cn.cheney.xrouter.constant.GenerateFileConstant;
+import cn.cheney.xrouter.constant.RouteType;
 
 public class ModuleClassGenerator {
 
@@ -39,20 +35,27 @@ public class ModuleClassGenerator {
 
     private String module;
 
+    private XRouterProcessor.Holder holder;
 
-    public ModuleClassGenerator(String module) {
+    private MethodSpec.Builder loadMethodBuilder;
+
+
+    public ModuleClassGenerator(String module, XRouterProcessor.Holder holder) {
         this.module = module;
         this.generatorClassName = GenerateFileConstant.MODULE_FILE_PREFIX + module;
+        this.holder = holder;
+        loadMethodBuilder = loadMethodBuilder();
     }
 
     /**
      * 最后生产java文件
-     *
-     * @param filer out put
      */
-    public void generateJavaFile(Filer filer) {
+    public void generateJavaFile() {
+        TypeMirror baseModuleType = holder.elementUtils
+                .getTypeElement(XTypeMirror.BASEMODULE).asType();
+
         TypeSpec typeSpec = TypeSpec.classBuilder(generatorClassName)
-                .superclass(BaseModule.class)
+                .superclass(TypeName.get(baseModuleType))
                 .addJavadoc(GenerateFileConstant.WARNING_TIPS)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(loadMethodBuilder.build())
@@ -63,24 +66,27 @@ public class ModuleClassGenerator {
         JavaFile javaFile = JavaFile.builder("cn.cheney.xrouter", typeSpec)
                 .build();
         try {
-            javaFile.writeTo(filer);
+            javaFile.writeTo(holder.filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * public void load(Map<String, MethodInvokable> routeMap) {}
+     * public void load(Map<String, Invokable> routeMap) {}
      */
-    private MethodSpec.Builder loadMethodBuilder = MethodSpec.methodBuilder("load")
-            .addModifiers(Modifier.PUBLIC)
-            .returns(TypeName.VOID)
-            .addAnnotation(Override.class)
-            .addParameter(ParameterizedTypeName.get(
-                    ClassName.get(Map.class),
-                    ClassName.get(String.class),
-                    ClassName.get(Invokable.class)),
-                    "routeMap");
+    private MethodSpec.Builder loadMethodBuilder() {
+        return MethodSpec.methodBuilder("load")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(TypeName.VOID)
+                .addAnnotation(Override.class)
+                .addParameter(ParameterizedTypeName.get(
+                        ClassName.get(Map.class),
+                        ClassName.get(String.class),
+                        ClassName.get(holder.elementUtils
+                                .getTypeElement(XTypeMirror.INVOKABLE))),
+                        "routeMap");
+    }
 
     /**
      * public String getName() {return "home";}
@@ -94,20 +100,20 @@ public class ModuleClassGenerator {
     /**
      * routeMap.put("/test2",new MethodInvoke() or new ActivityInvoke());
      */
-    public void generateSeg(XRouterProcessor.Holder holder, TypeElement classType, String path) {
+    public void generateSeg(TypeElement classType, String path) {
         TypeMirror typeActivity = holder.elementUtils
-                .getTypeElement(TypeMirrorConstant.ACTIVITY).asType();
+                .getTypeElement(XTypeMirror.ACTIVITY).asType();
 
         TypeMirror typeMethod = holder.elementUtils
-                .getTypeElement(TypeMirrorConstant.IMETHOD).asType();
+                .getTypeElement(XTypeMirror.I_METHOD).asType();
 
-        TypeMirror typeContext = holder.elementUtils
-                .getTypeElement(TypeMirrorConstant.CONTEXT).asType();
+        TypeMirror typeActivityInvoke = holder.elementUtils
+                .getTypeElement(XTypeMirror.ACTIVITY_INVOKE).asType();
 
         if (holder.types.isSubtype(classType.asType(), typeActivity)) {
             String segBuilder = "$L.put($S,new $T(" + "$T.ACTIVITY,$T.class,$S,$S" + "))";
             loadMethodBuilder.addStatement(segBuilder, "routeMap", path,
-                    ActivityInvoke.class, RouteType.class, classType, module, path);
+                    typeActivityInvoke, RouteType.class, classType, module, path);
         } else if (holder.types.isSubtype(classType.asType(), typeMethod)) {
             for (Element element : classType.getEnclosedElements()) {
                 if (element instanceof ExecutableElement) {
@@ -156,10 +162,10 @@ public class ModuleClassGenerator {
         if (null != parameters && !parameters.isEmpty()) {
             boolean hasCallback = false;
             for (VariableElement variableElement : parameters) {
-                TypeMirror methodParamType = variableElement.asType();
+                javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
                 String key;
                 XParam xParam = variableElement.getAnnotation(XParam.class);
-                if (variableElement.asType().toString().equals(TypeMirrorConstant.CALLBACK)) {
+                if (variableElement.asType().toString().equals(XTypeMirror.CALLBACK)) {
                     if (hasCallback) {
                         Logger.e(String.format("[%s] [%s] only one RouteCallback !!",
                                 classType.getQualifiedName(),

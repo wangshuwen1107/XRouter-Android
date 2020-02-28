@@ -30,7 +30,6 @@ public class RealChain implements RouterInterceptor.Chain {
     @Override
     public Invokable proceed(BaseCall call) {
         index++;
-        Logger.d("index=" + index);
         RouterInterceptor routerInterceptor = interceptorList.get(index);
         if (null != routerInterceptor) {
             Invokable invokable = null;

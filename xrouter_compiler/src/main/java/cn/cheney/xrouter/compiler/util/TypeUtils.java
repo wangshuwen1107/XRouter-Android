@@ -7,17 +7,17 @@ import javax.lang.model.util.Types;
 
 import cn.cheney.xrouter.compiler.contant.TypeKind;
 
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.BOOLEAN;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.BYTE;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.CHAR;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.DOUBEL;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.FLOAT;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.INTEGER;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.LONG;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.PARCELABLE;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.SERIALIZABLE;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.SHORT;
-import static cn.cheney.xrouter.compiler.contant.TypeMirrorConstant.STRING;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.BOOLEAN;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.BYTE;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.CHAR;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.DOUBEL;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.FLOAT;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.INTEGER;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.LONG;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.PARCELABLE;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.SERIALIZABLE;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.SHORT;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.STRING;
 
 public class TypeUtils {
 
