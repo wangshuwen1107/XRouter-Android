@@ -112,14 +112,16 @@ public class ModuleClassGenerator {
             for (Element element : classType.getEnclosedElements()) {
                 if (element instanceof ExecutableElement) {
                     ExecutableElement executableElement = (ExecutableElement) element;
-                    addMethodInvoke(classType, executableElement, ParameterizedTypeName.get(typeContext));
+                    addMethodInvoke(holder, classType, executableElement);
                 }
             }
         }
     }
 
 
-    private void addMethodInvoke(TypeElement classType, ExecutableElement methodElement, TypeName contextName) {
+    private void addMethodInvoke(XRouterProcessor.Holder holder,
+                                 TypeElement classType,
+                                 ExecutableElement methodElement) {
         XMethod xMethod = methodElement.getAnnotation(XMethod.class);
         if (null == xMethod) {
             return;
@@ -199,7 +201,7 @@ public class ModuleClassGenerator {
         /*
          *   new MethodInvokable(RouteType.METHOD,YourClazz.class,module,path) {
          *       @Override
-         *       public Object setInvokable(Context context, Map<String, Object> params) {
+         *       public Object buildInvok(Context context, Map<String, Object> params) {
          *         return YourClass.YourMethod(params.get(yourKey));
          *       }
          *     }
@@ -207,7 +209,6 @@ public class ModuleClassGenerator {
         MethodSpec.Builder invokeBuilder = MethodSpec.methodBuilder("invoke")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(contextName, "context")
                 .addParameter(ParameterizedTypeName.get(
                         ClassName.get(Map.class),
                         ClassName.get(String.class),

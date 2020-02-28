@@ -7,7 +7,7 @@ import java.util.Map;
 import cn.cheney.xrouter.core.constant.RouteType;
 
 
-public abstract class Invokable<T> {
+public abstract class Invokable<R> {
 
     String path;
     RouteType type;
@@ -15,7 +15,7 @@ public abstract class Invokable<T> {
     Class<?> clazz;
 
 
-    public T invoke(@NonNull Map<String, Object> params) {
+    public R invoke(@NonNull Map<String, Object> params) {
         return null;
     }
 

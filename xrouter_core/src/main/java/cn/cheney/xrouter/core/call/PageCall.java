@@ -5,7 +5,7 @@ import android.content.Context;
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.invok.ActivityInvoke;
 
-public class PageCall extends BaseCall<ActivityInvoke, Integer> {
+public class PageCall extends BaseCall<Integer, ActivityInvoke> {
 
     private String action;
     private int enterAnim = -1;
@@ -15,6 +15,7 @@ public class PageCall extends BaseCall<ActivityInvoke, Integer> {
     public PageCall(String uriStr) {
         super(uriStr);
     }
+
 
     public String getAction() {
         return action;
@@ -60,7 +61,7 @@ public class PageCall extends BaseCall<ActivityInvoke, Integer> {
     }
 
     public Integer call(Context context) {
-        XRouter.getInstance().setInvokable(this);
+        XRouter.getInstance().buildInvok(this);
         if (null == invokable) {
             return null;
         }

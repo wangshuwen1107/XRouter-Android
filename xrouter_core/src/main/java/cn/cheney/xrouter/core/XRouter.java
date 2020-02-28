@@ -12,11 +12,11 @@ import java.util.List;
 import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.call.PageCall;
-import cn.cheney.xrouter.core.constant.RouteType;
 import cn.cheney.xrouter.core.exception.RouterException;
-import cn.cheney.xrouter.core.invok.ActivityInvoke;
+import cn.cheney.xrouter.core.interceptor.BuildInvokeInterceptor;
+import cn.cheney.xrouter.core.interceptor.RealChain;
+import cn.cheney.xrouter.core.interceptor.RouterInterceptor;
 import cn.cheney.xrouter.core.invok.Invokable;
-import cn.cheney.xrouter.core.invok.MethodInvokable;
 import cn.cheney.xrouter.core.module.RouteModuleManager;
 import cn.cheney.xrouter.core.syringe.Syringe;
 import cn.cheney.xrouter.core.syringe.SyringeManager;
@@ -35,12 +35,11 @@ public class XRouter {
 
     private static boolean hasInit;
 
-    private List<RouterInterceptor> mInterceptorList;
-
     private RouteModuleManager mRouteModules;
 
     private SyringeManager mSyringeManager;
 
+    private List<RouterInterceptor> mInterceptorList;
 
     private XRouter() {
         mRouteModules = new RouteModuleManager();
@@ -99,45 +98,12 @@ public class XRouter {
     }
 
 
-    public <C extends BaseCall> void setInvokable(C call) {
-        Invokable invokable = mRouteModules.getRouteMeta(call.getModule(),
-                call.getPath());
-        if (null == invokable) {
-            Logger.e("Can not Find Module=" + call.getModule()
-                    + " path=" + call.getPath() + " Invokable");
-            return;
-        }
-        RouteType routeType = invokable.getType();
-        if (null == routeType) {
-            Logger.e("Uri=" + getUriSite(call.getUri()) + " parse Failed unknown routeType");
-            return;
-        }
-        switch (routeType) {
-            case ACTIVITY:
-                ActivityInvoke activityInvoke = (ActivityInvoke) invokable;
-                if (!(call instanceof PageCall)) {
-                    Logger.e("Uri=" + getUriSite(call.getUri())
-                            + " parse -> ACTIVITY routeType but not pageCall");
-                    return;
-                }
-                PageCall pageCall = (PageCall) call;
-                pageCall.setInvokable(activityInvoke);
-                return;
-            case METHOD:
-                MethodInvokable methodInvokable = (MethodInvokable) invokable;
-                if (!(call instanceof MethodCall)) {
-                    Logger.e("Uri=" + getUriSite(call.getUri())
-                            + " parse -> METHOD routeType but not MethodCall");
-                    return;
-                }
-                MethodCall methodCall = (MethodCall) call;
-                methodCall.setInvokable(methodInvokable);
-                return;
-            default:
-                Logger.w("not support route type=" + routeType.name());
-        }
+    public void buildInvok(BaseCall call) {
+        mInterceptorList.add(new BuildInvokeInterceptor());
+        RealChain realChain = new RealChain(call, mInterceptorList);
+        Invokable invokable = realChain.proceed(call);
+        call.setInvokable(invokable);
     }
-
 
     public Activity getTopActivity() {
         return sTopActivityRf.get();
@@ -149,6 +115,9 @@ public class XRouter {
         }
     }
 
+    public RouteModuleManager getRouteModules() {
+        return mRouteModules;
+    }
 
     private static String getUriSite(Uri uri) {
         return uri.getScheme() + "://" + uri.getHost() + uri.getPath();

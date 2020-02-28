@@ -10,7 +10,7 @@ import java.util.Set;
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.invok.Invokable;
 
-public abstract class BaseCall<I extends Invokable, R> {
+public abstract class BaseCall<R, I extends Invokable<R>> {
 
     private String module;
     private String path;
@@ -42,6 +42,10 @@ public abstract class BaseCall<I extends Invokable, R> {
         return invokable;
     }
 
+    public void setInvokable(I invokable) {
+        this.invokable = invokable;
+    }
+
     private void parseUri(String uriStr) {
         if (TextUtils.isEmpty(uriStr)) {
             return;
@@ -67,10 +71,6 @@ public abstract class BaseCall<I extends Invokable, R> {
         }
     }
 
-    public <C extends BaseCall> C setInvokable(I invokable) {
-        this.invokable = invokable;
-        return (C) this;
-    }
 
     public abstract R call();
 

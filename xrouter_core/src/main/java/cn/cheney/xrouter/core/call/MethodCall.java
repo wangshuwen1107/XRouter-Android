@@ -5,7 +5,7 @@ import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.invok.MethodInvokable;
 
-public class MethodCall<R> extends BaseCall<MethodInvokable<R>, R> {
+public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
 
     public MethodCall(String uriStr) {
         super(uriStr);
@@ -13,7 +13,7 @@ public class MethodCall<R> extends BaseCall<MethodInvokable<R>, R> {
 
     @Override
     public R call() {
-        XRouter.getInstance().setInvokable(this);
+        XRouter.getInstance().buildInvok(this);
         if (null == invokable) {
             return null;
         }

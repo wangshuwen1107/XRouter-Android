@@ -2,7 +2,7 @@ package cn.cheney.xrouter.core.invok;
 
 import cn.cheney.xrouter.core.constant.RouteType;
 
-public class MethodInvokable <T> extends Invokable<T> {
+public class MethodInvokable<R> extends Invokable<R> {
 
 
     public MethodInvokable(RouteType type,

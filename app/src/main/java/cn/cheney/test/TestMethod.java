@@ -31,5 +31,15 @@ public class TestMethod implements IMethod {
     }
 
 
+    @XRoute(module = "home2")
+    public static class TestMethod2 implements IMethod{
+        @XMethod(name = "/getBookName")
+        public static Book getBookName(@XParam(name = "book") Book book) {
+            Log.i(TAG, "getBookName  =" + book);
+            return book;
+        }
+    }
+
+
 }
 
