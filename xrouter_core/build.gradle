@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-uploader'
 
 android {
     compileSdkVersion 29
@@ -23,10 +24,28 @@ android {
 }
 
 
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api project(":xrouter_annotation")
     implementation 'androidx.annotation:annotation:1.1.0'
+    if (DEBUG == '1') {
+        api project(":xrouter_annotation")
+    } else {
+        api 'cn.cheney.xrouter:annotation:1.0.0'
+    }
 }
 
+pluginMaven {
+    groupId "cn.cheney.xrouter"
+    artifactId "core"
+    version '1.0.0'
+    snapshotRepository {
+        url 'https://repo.rdc.aliyun.com/repository/121001-snapshot-QCKo28/'
+        userName 'IVhHoH'
+        password 'RCVBWn38pj'
+    }
+    repository {
+        url 'https://repo.rdc.aliyun.com/repository/121001-release-bwPsFH/'
+        userName 'IVhHoH'
+        password 'RCVBWn38pj'
+    }
+}

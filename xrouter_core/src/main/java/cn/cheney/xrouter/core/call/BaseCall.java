@@ -57,7 +57,10 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
         }
 
         this.module = uri.getHost();
-        this.path = uri.getPath().substring(1);
+        this.path = uri.getPath();
+        if (!TextUtils.isEmpty(this.path)) {
+            this.path = path.substring(1);
+        }
 
         Set<String> paramsSet = uri.getQueryParameterNames();
         if (null == paramsSet || paramsSet.isEmpty()) {

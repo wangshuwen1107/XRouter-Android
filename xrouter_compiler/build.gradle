@@ -2,7 +2,29 @@ apply plugin: 'java-library'
 
 
 dependencies {
-    implementation project(":xrouter_annotation")
+    if (DEBUG == '1') {
+        implementation project(":xrouter_annotation")
+    } else {
+        implementation 'cn.cheney.xrouter:annotation:1.0.0'
+    }
     implementation 'com.google.auto.service:auto-service:1.0-rc4'
     implementation 'com.squareup:javapoet:1.10.0'
+}
+
+apply plugin: 'maven-uploader'
+
+pluginMaven {
+    groupId "cn.cheney.xrouter"
+    artifactId "compiler"
+    version '1.0.0'
+    snapshotRepository {
+        url 'https://repo.rdc.aliyun.com/repository/121001-snapshot-QCKo28/'
+        userName 'IVhHoH'
+        password 'RCVBWn38pj'
+    }
+    repository {
+        url 'https://repo.rdc.aliyun.com/repository/121001-release-bwPsFH/'
+        userName 'IVhHoH'
+        password 'RCVBWn38pj'
+    }
 }
