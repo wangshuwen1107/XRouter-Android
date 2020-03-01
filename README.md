@@ -27,7 +27,6 @@ allprojects {
         }
     }
 }
-
  ```
 
 2.module build.gradle
@@ -43,9 +42,8 @@ dependencies {
 2.采用协议调用无需依赖任何接口协议
 
 #### 功能使用
-
 1.初始化
-```java
+ ```java
 public class App extends Application {
 
     @Override
@@ -72,11 +70,9 @@ public class App extends Application {
         });
     }
 }
-
-```
+ ```
 2.注解
-```java
-
+ ```java
 //此时对应路由scheme://test/page1
 @XRoute(path = "page1", module = "test")
 public class TestActivity extends Activity {
@@ -100,17 +96,16 @@ public class HomeMethod implements IMethod {
     public static Book getBookName(@XParam(name = "book") Book book) {
         return book;
     }
-    
-    //异步方法，必须包含RouteCallback参数
+	//异步方法，必须包含RouteCallback参数
     @XMethod(name = "getAsyncBookName")
-    public static void getAsyncBookName(@XParam(name = "book") Book book, RouteCallback callback) {
+	public static void getAsyncBookName(@XParam(name = "book") Book book, RouteCallback callback) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("book", book);
         callback.onResult(map);
     }
 }
-
-2.调用
+ ```
+ 3.调用
 ```java
 //跳转界面
 Integer requestCode = XRouter.page("home/page")
@@ -137,4 +132,6 @@ Integer requestCode = XRouter.page("home/page")
                         });
 
 ```
+
+
 
