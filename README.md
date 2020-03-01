@@ -132,6 +132,14 @@ Integer requestCode = XRouter.page("home/page")
                         });
 
 ```
+#### 混淆配置
+```
+-keep class cn.cheney.xrouter.XRoute$$*
+-keep class * implements cn.cheney.xrouter.core.syringe.Syringe {*;}
+```
+#### 致谢
+* JavaPoet，感谢提供高效的生成代码方式
+* ARouter，感谢提供了inject思路
 
 
 
