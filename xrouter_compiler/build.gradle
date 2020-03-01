@@ -1,5 +1,5 @@
 apply plugin: 'java-library'
-
+apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
     if (DEBUG == '1') {
@@ -11,20 +11,11 @@ dependencies {
     implementation 'com.squareup:javapoet:1.10.0'
 }
 
-apply plugin: 'maven-uploader'
-
-pluginMaven {
-    groupId "cn.cheney.xrouter"
-    artifactId "compiler"
-    version '1.0.0'
-    snapshotRepository {
-        url 'https://repo.rdc.aliyun.com/repository/121001-snapshot-QCKo28/'
-        userName 'IVhHoH'
-        password 'RCVBWn38pj'
-    }
-    repository {
-        url 'https://repo.rdc.aliyun.com/repository/121001-release-bwPsFH/'
-        userName 'IVhHoH'
-        password 'RCVBWn38pj'
-    }
+publish {
+    userOrg = 'wenwen'
+    groupId = 'cn.cheney.xrouter'
+    artifactId = 'compiler'
+    publishVersion = '1.0.0'
+    desc = 'this is a xrouter compiler'
+    website = 'https://github.com/novoda/bintray-release'
 }

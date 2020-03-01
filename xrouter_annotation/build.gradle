@@ -1,22 +1,14 @@
 apply plugin: 'java-library'
-apply plugin: 'maven-uploader'
+apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
 }
 
-
-pluginMaven {
-    groupId "cn.cheney.xrouter"
-    artifactId "annotation"
-    version '1.0.0'
-    snapshotRepository {
-        url 'https://repo.rdc.aliyun.com/repository/121001-snapshot-QCKo28/'
-        userName 'IVhHoH'
-        password 'RCVBWn38pj'
-    }
-    repository {
-        url 'https://repo.rdc.aliyun.com/repository/121001-release-bwPsFH/'
-        userName 'IVhHoH'
-        password 'RCVBWn38pj'
-    }
+publish {
+    userOrg = 'wenwen'
+    groupId = 'cn.cheney.xrouter'
+    artifactId = 'annotation'
+    publishVersion = '1.0.0'
+    desc = 'this is a xRouter annotation'
+    website = 'https://github.com/novoda/bintray-release'
 }

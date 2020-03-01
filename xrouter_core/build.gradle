@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven-uploader'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 29
@@ -34,18 +34,12 @@ dependencies {
     }
 }
 
-pluginMaven {
-    groupId "cn.cheney.xrouter"
-    artifactId "core"
-    version '1.0.0'
-    snapshotRepository {
-        url 'https://repo.rdc.aliyun.com/repository/121001-snapshot-QCKo28/'
-        userName 'IVhHoH'
-        password 'RCVBWn38pj'
-    }
-    repository {
-        url 'https://repo.rdc.aliyun.com/repository/121001-release-bwPsFH/'
-        userName 'IVhHoH'
-        password 'RCVBWn38pj'
-    }
+
+publish {
+    userOrg = 'wenwen'
+    groupId = 'cn.cheney.xrouter'
+    artifactId = 'core'
+    publishVersion = '1.0.0'
+    desc = 'this is a xrouter core api'
+    website = 'https://github.com/novoda/bintray-release'
 }
