@@ -187,7 +187,7 @@ public class ModuleClassGenerator {
                     }
                 }
                 if (parameters.indexOf(variableElement) == parameters.size() - 1) {
-                    paramSeg.append("($T)params.get($S))");
+                    paramSeg.append("($T)params.get($S)");
                 } else {
                     paramSeg.append("($T)params.get($S),");
                 }
@@ -195,6 +195,7 @@ public class ModuleClassGenerator {
                 paramsSegList.add(key);
             }
         }
+        paramSeg.append(")");
         //返回类型的泛型className
         ClassName returnClassName;
         if (!isReturnVoid) {

@@ -30,17 +30,13 @@ public class HomeMethod implements IMethod {
         callback.onResult(map);
     }
 
-
-    @XRoute(module = "home2")
-    public static class TestMethod2 implements IMethod {
-
-        @XMethod(name = "getBookName")
-        public static Book getBookName(@XParam(name = "book") Book book) {
-            Log.i(TAG, "getBookName  =" + book);
-            return book;
-        }
+    @XMethod(name = "getBookName2")
+    public static Book getBookName() {
+        Log.i(TAG, "getBookName2 is called   ");
+        Book book = new Book();
+        book.name = "php";
+        return book;
     }
-
 
 }
 
