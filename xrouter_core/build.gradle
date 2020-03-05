@@ -39,7 +39,7 @@ publish {
     userOrg = 'wenwen'
     groupId = 'cn.cheney.xrouter'
     artifactId = 'core'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     desc = 'this is a xrouter core api'
     website = 'https://github.com/novoda/bintray-release'
 }

@@ -16,7 +16,7 @@ publish {
     userOrg = 'wenwen'
     groupId = 'cn.cheney.xrouter'
     artifactId = 'compiler'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'this is a xrouter compiler'
     website = 'https://github.com/novoda/bintray-release'
 }
