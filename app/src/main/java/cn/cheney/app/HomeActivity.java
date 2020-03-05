@@ -17,8 +17,6 @@ public class HomeActivity extends AppCompatActivity {
     @XParam(name = "testParam")
     Book book;
 
-    String gogog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

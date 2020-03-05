@@ -33,4 +33,11 @@ public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
         return this;
     }
 
+
+    public boolean isAsync() {
+        if (null == invokable) {
+            return false;
+        }
+        return invokable.isAsync();
+    }
 }

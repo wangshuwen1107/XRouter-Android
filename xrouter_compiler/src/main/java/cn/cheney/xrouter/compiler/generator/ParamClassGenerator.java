@@ -74,7 +74,8 @@ public class ParamClassGenerator {
      */
     public void generateSeg(XRouterProcessor.Holder holder, VariableElement variableElement, XParam param) {
         String key = param.name().isEmpty() ? variableElement.getSimpleName().toString() : param.name();
-        String getExtraStr = getExtraByType(holder.typeUtils.typeExchange(variableElement));
+        String originValue = "activity." + variableElement.getSimpleName().toString();
+        String getExtraStr = getExtraByType(originValue, holder.typeUtils.typeExchange(variableElement));
         if (getExtraStr.isEmpty()) {
             return;
         }
@@ -85,24 +86,24 @@ public class ParamClassGenerator {
     }
 
 
-    private String getExtraByType(int type) {
+    private String getExtraByType(String originalValue, int type) {
         switch (TypeKind.values()[type]) {
             case BYTE:
                 return "getByteExtra($S)";
             case BOOLEAN:
-                return "getBooleanExtra($S)";
+                return "getBooleanExtra($S ," + originalValue + ")";
             case SHORT:
-                return "getShortExtra($S)";
+                return "getShortExtra($S ," + originalValue + ")";
             case INT:
-                return "getIntExtra($S)";
+                return "getIntExtra($S ," + originalValue + ")";
             case LONG:
-                return "getLongExtra($S)";
+                return "getLongExtra($S ," + originalValue + ")";
             case FLOAT:
-                return "getFloatExtra($S)";
+                return "getFloatExtra($S ," + originalValue + ")";
             case DOUBLE:
-                return "getDoubleExtra($S)";
+                return "getDoubleExtra($S ," + originalValue + ")";
             case CHAR:
-                return "getCharExtra($S)";
+                return "getCharExtra($S ," + originalValue + ")";
             case STRING:
                 return "getStringExtra($S)";
             case SERIALIZABLE:

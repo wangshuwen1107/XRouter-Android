@@ -9,6 +9,7 @@ import java.util.Map;
 
 import cn.cheney.xrouter.core.RouteCallback;
 import cn.cheney.xrouter.core.XRouter;
+import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.util.Logger;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,10 +38,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-                Book bookReturn = XRouter.<Book>method("home/getBookName")
-                        .put("book", book)
-                        .call();
-                Logger.d("getSyncBookName bookReturn= " + bookReturn);
+                MethodCall<Book> bookMethodCall = XRouter.<Book>method("home/getBookName")
+                        .put("book", book);
+                Book bookReturn = bookMethodCall.call();
+                Logger.d("getSyncBookName bookReturn= " + bookReturn
+                        + " isAsync=" + bookMethodCall.isAsync());
             }
         });
 
@@ -49,14 +51,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-                XRouter.<Book>method("home/getAsyncBookName")
-                        .put("book", book)
-                        .call(new RouteCallback() {
-                            @Override
-                            public void onResult(Map<String, Object> result) {
-                                Logger.d("getAsyncBookName bookReturn= " + result);
-                            }
-                        });
+                final MethodCall<Book> methodCall = XRouter.<Book>method("home/getAsyncBookName")
+                        .put("book", book);
+                methodCall.call(new RouteCallback() {
+                    @Override
+                    public void onResult(Map<String, Object> result) {
+                        Logger.d("getAsyncBookName bookReturn= "
+                                + " isAsync=" + methodCall.isAsync());
+                    }
+                });
             }
         });
 

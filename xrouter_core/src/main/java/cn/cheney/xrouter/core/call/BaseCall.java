@@ -34,6 +34,14 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
         return uri;
     }
 
+    public void setUri(Uri uri) {
+        if (null == uri) {
+            return;
+        }
+        this.uri = uri;
+        rebuild();
+    }
+
     public Map<String, Object> getParamsMap() {
         return paramsMap;
     }
@@ -55,7 +63,11 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
         if (TextUtils.isEmpty(uri.getScheme())) {
             uri = Uri.parse(XRouter.sScheme + "://" + uriStr);
         }
+        rebuild();
+    }
 
+
+    private void rebuild() {
         this.module = uri.getHost();
         this.path = uri.getPath();
         if (!TextUtils.isEmpty(this.path)) {

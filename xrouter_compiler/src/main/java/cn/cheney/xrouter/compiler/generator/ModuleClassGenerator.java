@@ -159,8 +159,8 @@ public class ModuleClassGenerator {
         } else {
             paramSeg.append("return $T.$L(");
         }
+        boolean hasCallback = false;
         if (null != parameters && !parameters.isEmpty()) {
-            boolean hasCallback = false;
             for (VariableElement variableElement : parameters) {
                 javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
                 String key;
@@ -208,7 +208,7 @@ public class ModuleClassGenerator {
         /*
          *   new MethodInvokable(RouteType.METHOD,YourClazz.class,module,path) {
          *       @Override
-         *       public Object build(Context context, Map<String, Object> params) {
+         *       public Object invoke(Map<String, Object> params) {
          *         return YourClass.YourMethod(params.get(yourKey));
          *       }
          *     }
@@ -226,9 +226,9 @@ public class ModuleClassGenerator {
         if (isReturnVoid) {
             invokeBuilder.addStatement("return null");
         }
-        String methodInvokeClassStr = "$T.METHOD,$T.class,$S,$S";
+        String methodInvokeClassStr = "$T.METHOD,$T.class,$S,$S,$L";
         TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr,
-                RouteType.class, classType, module, xMethod.name())
+                RouteType.class, classType, module, xMethod.name(), hasCallback)
                 .addSuperinterface(methodInvokableType)
                 .addMethod(invokeBuilder.build())
                 .build();

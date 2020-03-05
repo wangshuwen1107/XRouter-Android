@@ -11,6 +11,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = [AROUTER_MODULE_NAME: project.getName()]
+//            }
+//        }
     }
 
     signingConfigs {
@@ -43,5 +48,6 @@ dependencies {
         implementation 'cn.cheney.xrouter:core:1.0.0'
         annotationProcessor 'cn.cheney.xrouter:compiler:1.0.1'
     }
-
+//    implementation 'com.alibaba:arouter-api:1.5.0'
+//    annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
 }
