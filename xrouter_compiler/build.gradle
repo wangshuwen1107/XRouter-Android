@@ -7,7 +7,6 @@ dependencies {
     } else {
         implementation 'cn.cheney.xrouter:annotation:1.0.0'
     }
-    implementation 'cn.cheney.xrouter:annotation:1.0.0'
     implementation 'com.google.auto.service:auto-service:1.0-rc4'
     implementation 'com.squareup:javapoet:1.10.0'
 }
@@ -16,7 +15,7 @@ publish {
     userOrg = 'wenwen'
     groupId = 'cn.cheney.xrouter'
     artifactId = 'compiler'
-    publishVersion = '1.0.2'
+    publishVersion = '1.0.3'
     desc = 'this is a xrouter compiler'
     website = 'https://github.com/novoda/bintray-release'
 }

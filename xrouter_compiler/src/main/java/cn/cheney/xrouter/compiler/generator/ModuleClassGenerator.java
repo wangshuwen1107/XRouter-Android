@@ -197,9 +197,9 @@ public class ModuleClassGenerator {
         }
         paramSeg.append(")");
         //返回类型的泛型className
-        ClassName returnClassName;
+        TypeName returnClassName;
         if (!isReturnVoid) {
-            returnClassName = ClassName.bestGuess(returnType.toString());
+            returnClassName = TypeName.get(returnType);
         } else {
             returnClassName = ClassName.bestGuess("java.lang.Void");
         }

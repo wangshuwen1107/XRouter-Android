@@ -3,6 +3,7 @@ package cn.cheney.app;
 import android.util.Log;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
@@ -16,9 +17,10 @@ public class HomeMethod implements IMethod {
     private static final String TAG = HomeMethod.class.getSimpleName();
 
     @XMethod(name = "getBookName")
-    public static Book getBookName(@XParam(name = "book") Book book) {
+    public static Map<String,String> getBookName(@XParam(name = "book") Book book) {
         Log.i(TAG, "getBookName  =" + book);
-        return book;
+        Map<String, String> map = new HashMap<>();
+        return map;
     }
 
 
