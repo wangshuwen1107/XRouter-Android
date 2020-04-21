@@ -2,6 +2,7 @@ package cn.cheney.xrouter.core.invok;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
 import java.util.Map;
 
 import cn.cheney.xrouter.constant.RouteType;
@@ -13,7 +14,7 @@ public abstract class Invokable<R> {
     RouteType type;
     String module;
     Class<?> clazz;
-
+    List<ParamInfo> params;
 
     public R invoke(@NonNull Map<String, Object> params) {
         return null;
@@ -52,5 +53,12 @@ public abstract class Invokable<R> {
         this.clazz = clazz;
     }
 
+    public List<ParamInfo> getParams() {
+        return params;
+    }
+
+    public void setParams(List<ParamInfo> params) {
+        this.params = params;
+    }
 }
 

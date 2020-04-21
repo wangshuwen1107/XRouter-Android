@@ -21,10 +21,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Book book = new Book();
-                book.name = "Kotlin";
-                Integer requestCode = XRouter.page("home/page")
-                        .put("testParam", book)
+                Integer requestCode = XRouter.page("home/page?book={\"name\":\"Kotlin\"}")
                         .action("cn.cheney.xrouter")
                         .anim(R.anim.enter_bottom, R.anim.exit_bottom)
                         .requestCode(1000)
@@ -38,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-                MethodCall<Book> bookMethodCall = XRouter.<Book>method("home/getBookName")
-                        .put("book", book);
+
+                MethodCall<Book> bookMethodCall = XRouter.<Book>method("home/getBookName?book={\"name\":\"Kotlin\"}");
+
                 Book bookReturn = bookMethodCall.call();
                 Logger.d("getSyncBookName bookReturn= " + bookReturn
                         + " isAsync=" + bookMethodCall.isAsync());

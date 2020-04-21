@@ -24,6 +24,7 @@ public class XTypeMirror {
     public static final String INVOKABLE = "cn.cheney.xrouter.core.invok.Invokable";
     public static final String ACTIVITY_INVOKE = "cn.cheney.xrouter.core.invok.ActivityInvoke";
     public static final String SYRINGE = "cn.cheney.xrouter.core.syringe.Syringe";
+    public static final String PARAM_INFO = "cn.cheney.xrouter.core.invok.ParamInfo";
 
 
 }

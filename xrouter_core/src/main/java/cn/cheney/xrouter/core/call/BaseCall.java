@@ -3,9 +3,10 @@ package cn.cheney.xrouter.core.call;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.invok.Invokable;
@@ -59,10 +60,10 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
             uri = Uri.EMPTY;
             return;
         }
-        uri = Uri.parse(uriStr);
-        if (TextUtils.isEmpty(uri.getScheme())) {
-            uri = Uri.parse(XRouter.sScheme + "://" + uriStr);
+        if (!uriStr.contains("://")) {
+            uriStr = XRouter.sScheme + "://" + uriStr;
         }
+        uri = Uri.parse(uriStr);
         rebuild();
     }
 
@@ -73,20 +74,40 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
         if (!TextUtils.isEmpty(this.path)) {
             this.path = path.substring(1);
         }
-
-        Set<String> paramsSet = uri.getQueryParameterNames();
-        if (null == paramsSet || paramsSet.isEmpty()) {
+        String query = uri.getQuery();
+        if (TextUtils.isEmpty(query)) {
             return;
         }
-        for (String paramKey : paramsSet) {
-            if (TextUtils.isEmpty(paramKey)) {
-                continue;
-            }
-            String value = uri.getQueryParameter(paramKey);
-            paramsMap.put(paramKey, value);
+        List<String> nameAndValueList = toNamesAndValues(query);
+        if (nameAndValueList.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < nameAndValueList.size(); i = i + 2) {
+            String key = nameAndValueList.get(i);
+            String value = nameAndValueList.get(i + 1);
+            paramsMap.put(key, XRouter.getInstance().parse(this, key, value));
         }
     }
 
+    public static List<String> toNamesAndValues(String encodedQuery) {
+        List<String> result = new ArrayList<>();
+        if (encodedQuery.length() == 0) return result;
+        for (int pos = 0; pos <= encodedQuery.length(); ) {
+            int ampersandOffset = encodedQuery.indexOf('&', pos);
+            if (ampersandOffset == -1) ampersandOffset = encodedQuery.length();
+
+            int equalsOffset = encodedQuery.indexOf('=', pos);
+            if (equalsOffset == -1 || equalsOffset > ampersandOffset) {
+                result.add(encodedQuery.substring(pos, ampersandOffset));
+                result.add(null); // No value for this name.
+            } else {
+                result.add(encodedQuery.substring(pos, equalsOffset));
+                result.add(encodedQuery.substring(equalsOffset + 1, ampersandOffset));
+            }
+            pos = ampersandOffset + 1;
+        }
+        return result;
+    }
 
     public abstract R call();
 

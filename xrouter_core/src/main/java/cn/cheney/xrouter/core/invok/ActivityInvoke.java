@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import cn.cheney.xrouter.constant.RouteType;
@@ -23,11 +25,13 @@ public class ActivityInvoke extends Invokable<Integer> {
     public ActivityInvoke(RouteType type,
                           Class<?> className,
                           String module,
-                          String path) {
+                          String path,
+                          ParamInfo... params) {
         this.type = type;
         this.path = path;
         this.module = module;
         this.clazz = className;
+        this.params = params == null ? new ArrayList<ParamInfo>() : Arrays.asList(params);
     }
 
     public Integer invoke(@Nullable Context context,

@@ -107,13 +107,9 @@ public class ModuleClassGenerator {
         TypeMirror typeMethod = holder.elementUtils
                 .getTypeElement(XTypeMirror.I_METHOD).asType();
 
-        TypeMirror typeActivityInvoke = holder.elementUtils
-                .getTypeElement(XTypeMirror.ACTIVITY_INVOKE).asType();
 
         if (holder.types.isSubtype(classType.asType(), typeActivity)) {
-            String segBuilder = "$L.put($S,new $T(" + "$T.ACTIVITY,$T.class,$S,$S" + "))";
-            loadMethodBuilder.addStatement(segBuilder, "routeMap", path,
-                    typeActivityInvoke, RouteType.class, classType, module, path);
+            addActivityInvoke(classType, path);
         } else if (holder.types.isSubtype(classType.asType(), typeMethod)) {
             for (Element element : classType.getEnclosedElements()) {
                 if (element instanceof ExecutableElement) {
@@ -125,9 +121,74 @@ public class ModuleClassGenerator {
     }
 
 
+    private String getParamName(XParam xParam, String originalName) {
+        if (null != xParam && !xParam.name().isEmpty()) {
+            return xParam.name();
+        }
+        return originalName;
+    }
+
+
+    private void addActivityInvoke(TypeElement activityType, String path) {
+        TypeMirror typeActivityInvoke = holder.elementUtils
+                .getTypeElement(XTypeMirror.ACTIVITY_INVOKE).asType();
+
+        TypeMirror paramInfoType = holder.elementUtils
+                .getTypeElement(XTypeMirror.PARAM_INFO).asType();
+
+        StringBuilder paramsInfoSeg = new StringBuilder();
+        List<Object> paramsInfoSegList = new ArrayList<>();
+
+        /**
+         *  routeMap.put("page",new ActivityInvoke(RouteType.ACTIVITY,HomeActivity.class,"home","page"));
+         */
+        paramsInfoSeg.append("$L.put($S,new $T($T.ACTIVITY,$T.class,$S,$S");
+
+        paramsInfoSegList.add("routeMap");
+        paramsInfoSegList.add(path);
+        paramsInfoSegList.add(typeActivityInvoke);
+        paramsInfoSegList.add(RouteType.class);
+        paramsInfoSegList.add(activityType);
+        paramsInfoSegList.add(module);
+        paramsInfoSegList.add(path);
+
+
+        List<VariableElement> xParamElementList = new ArrayList<>();
+        for (Element element : activityType.getEnclosedElements()) {
+            if (element instanceof VariableElement) {
+                VariableElement variableElement = (VariableElement) element;
+                XParam xParam = variableElement.getAnnotation(XParam.class);
+                if (null != xParam) {
+                    xParamElementList.add(variableElement);
+                }
+            }
+        }
+        if (!xParamElementList.isEmpty()) {
+            paramsInfoSeg.append(",");
+        }
+        for (VariableElement variableElement : xParamElementList) {
+            XParam xParam = variableElement.getAnnotation(XParam.class);
+            if (xParamElementList.indexOf(variableElement) == xParamElementList.size() - 1) {
+                paramsInfoSeg.append("new $T($S,$T.class)");
+            } else {
+                paramsInfoSeg.append("new $T($S,$T.class),");
+            }
+            paramsInfoSegList.add(paramInfoType);
+            paramsInfoSegList.add(getParamName(xParam, variableElement.getSimpleName().toString()));
+            paramsInfoSegList.add(variableElement.asType());
+        }
+        paramsInfoSeg.append("))");
+
+        loadMethodBuilder.addStatement(paramsInfoSeg.toString(), paramsInfoSegList.toArray());
+    }
+
+
     private void addMethodInvoke(XRouterProcessor.Holder holder,
                                  TypeElement classType,
                                  ExecutableElement methodElement) {
+        TypeMirror paramInfoType = holder.elementUtils
+                .getTypeElement(XTypeMirror.PARAM_INFO).asType();
+
         XMethod xMethod = methodElement.getAnnotation(XMethod.class);
         if (null == xMethod) {
             return;
@@ -159,6 +220,11 @@ public class ModuleClassGenerator {
         } else {
             paramSeg.append("return $T.$L(");
         }
+
+        StringBuilder paramsInfoSeg = new StringBuilder();
+        List<Object> allInfoSegList = new ArrayList<>();
+        List<Object> paramsInfoSegList = new ArrayList<>();
+
         boolean hasCallback = false;
         if (null != parameters && !parameters.isEmpty()) {
             for (VariableElement variableElement : parameters) {
@@ -175,11 +241,7 @@ public class ModuleClassGenerator {
                     key = GenerateFileConstant.CALLBACK_KEY;
                     hasCallback = true;
                 } else {
-                    if (null != xParam && !xParam.name().isEmpty()) {
-                        key = xParam.name();
-                    } else {
-                        key = variableElement.getSimpleName().toString();
-                    }
+                    key = getParamName(xParam, variableElement.getSimpleName().toString());
                     if (key.equals(GenerateFileConstant.CALLBACK_KEY)) {
                         Logger.e(String.format("[%s] [%s] have illegal key ROUTE_CALLBACK",
                                 classType.getQualifiedName(),
@@ -188,11 +250,18 @@ public class ModuleClassGenerator {
                 }
                 if (parameters.indexOf(variableElement) == parameters.size() - 1) {
                     paramSeg.append("($T)params.get($S)");
+                    paramsInfoSeg.append("new $T($S,$T.class)");
                 } else {
                     paramSeg.append("($T)params.get($S),");
+                    paramsInfoSeg.append("new $T($S,$T.class),");
                 }
                 paramsSegList.add(methodParamType);
                 paramsSegList.add(key);
+
+                paramsInfoSegList.add(paramInfoType);
+                paramsInfoSegList.add(getParamName(xParam, variableElement.getSimpleName().toString()));
+                paramsInfoSegList.add(methodParamType);
+
             }
         }
         paramSeg.append(")");
@@ -226,9 +295,20 @@ public class ModuleClassGenerator {
         if (isReturnVoid) {
             invokeBuilder.addStatement("return null");
         }
+
         String methodInvokeClassStr = "$T.METHOD,$T.class,$S,$S,$L";
-        TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr,
-                RouteType.class, classType, module, xMethod.name(), hasCallback)
+        if (!paramsInfoSeg.toString().isEmpty()) {
+            methodInvokeClassStr += "," + paramsInfoSeg.toString();
+        }
+
+        allInfoSegList.add(RouteType.class);
+        allInfoSegList.add(classType);
+        allInfoSegList.add(module);
+        allInfoSegList.add(xMethod.name());
+        allInfoSegList.add(hasCallback);
+        allInfoSegList.addAll(paramsInfoSegList);
+
+        TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr, allInfoSegList.toArray())
                 .addSuperinterface(methodInvokableType)
                 .addMethod(invokeBuilder.build())
                 .build();

@@ -14,7 +14,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
 
-    @XParam(name = "testParam")
+    @XParam()
     Book book;
 
     @Override
@@ -22,7 +22,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test1);
         XRouter.getInstance().inject(this);
-        Log.i(TAG, "name =" + book + " action=" + getIntent().getAction());
+
+        Log.i(TAG, "onCreate book=" + book);
     }
 
 }

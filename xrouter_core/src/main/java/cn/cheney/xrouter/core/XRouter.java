@@ -20,7 +20,10 @@ import cn.cheney.xrouter.core.interceptor.BuildInvokeInterceptor;
 import cn.cheney.xrouter.core.interceptor.RealChain;
 import cn.cheney.xrouter.core.interceptor.RouterInterceptor;
 import cn.cheney.xrouter.core.invok.Invokable;
+import cn.cheney.xrouter.core.invok.ParamInfo;
 import cn.cheney.xrouter.core.module.RouteModuleManager;
+import cn.cheney.xrouter.core.parser.DefaultParser;
+import cn.cheney.xrouter.core.parser.ParamParser;
 import cn.cheney.xrouter.core.syringe.Syringe;
 import cn.cheney.xrouter.core.syringe.SyringeManager;
 import cn.cheney.xrouter.core.util.Logger;
@@ -43,6 +46,8 @@ public class XRouter {
     private SyringeManager mSyringeManager;
 
     private List<RouterInterceptor> mInterceptorList;
+
+    private ParamParser paramParser = new DefaultParser();
 
     private XRouter() {
         mRouteModules = new RouteModuleManager();
@@ -119,7 +124,7 @@ public class XRouter {
 
     private RouterErrorHandler mErrorHandler;
 
-    public void setErroHandler(RouterErrorHandler errorHandler) {
+    public void setErrorHandler(RouterErrorHandler errorHandler) {
         this.mErrorHandler = errorHandler;
     }
 
@@ -141,4 +146,25 @@ public class XRouter {
         return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
     }
 
+    public Object parse(BaseCall call, String paramName, String paramValue) {
+        Invokable invokable = XRouter.getInstance().getRouteModules().getRouteMeta(call.getModule(),
+                call.getPath());
+        if (null == invokable
+                || TextUtils.isEmpty(paramName)) {
+            return paramValue;
+        }
+        List<ParamInfo> params = invokable.getParams();
+        for (ParamInfo param : params) {
+            if (paramName.equals(param.getName())) {
+                Object parseObject = null;
+                try {
+                    parseObject = paramParser.parse(paramName, paramValue, param.getType());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null == parseObject ? paramValue : parseObject;
+            }
+        }
+        return paramValue;
+    }
 }

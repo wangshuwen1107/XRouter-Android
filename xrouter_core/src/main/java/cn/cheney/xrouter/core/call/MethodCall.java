@@ -16,7 +16,12 @@ public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
         if (!XRouter.getInstance().build(this)) {
             return null;
         }
-        return invokable.invoke(paramsMap);
+        try{
+           return invokable.invoke(paramsMap);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public R call(RouteCallback callback) {
