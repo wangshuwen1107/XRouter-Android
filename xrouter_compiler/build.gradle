@@ -15,7 +15,7 @@ publish {
     userOrg = 'wenwen'
     groupId = 'cn.cheney.xrouter'
     artifactId = 'compiler'
-    publishVersion = '1.0.4'
+    publishVersion = '1.0.0'
     desc = 'this is a xrouter compiler'
     website = 'https://github.com/wangshuwen1107/XRouter'
 }
