@@ -1,8 +1,12 @@
 package cn.cheney.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Map;
@@ -21,13 +25,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer requestCode = XRouter.page("home/page?book={\"name\":\"Kotlin\"}")
-                        .action("cn.cheney.xrouter")
-                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
-                        .requestCode(1000)
-                        .call();
-                Logger.d("Route Page requestCode= " + requestCode);
-
+//                Integer requestCode = XRouter.page("home/page?book={\"name\":\"Kotlin\"}")
+//                        .action("cn.cheney.xrouter")
+//                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
+//                        .requestCode(1000)
+//                        .call();
+//                Logger.d("Route Page requestCode= " + requestCode);
+                //生成Intent.
+                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                //启动摄像头应用程序
+                startActivityForResult(intent, 2000);
             }
         });
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
@@ -93,5 +100,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2000) {
+            if (null != data) {
+                Uri uri = data.getData();
+                Logger.d("uri=" + uri);
+            }
+        }
     }
 }

@@ -5,8 +5,6 @@ import android.app.Application;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,12 +94,12 @@ public class XRouter {
         syringe.inject(activity);
     }
 
-    public static PageCall page(@NonNull String uriStr) {
+    public static PageCall page(String uriStr) {
         return new PageCall(uriStr);
     }
 
 
-    public static <R> MethodCall<R> method(@NonNull String uriStr) {
+    public static <R> MethodCall<R> method(String uriStr) {
         return new MethodCall<>(uriStr);
     }
 

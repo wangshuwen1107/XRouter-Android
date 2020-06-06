@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +31,7 @@ public class ActivityInvoke extends Invokable<Integer> {
         this.params = params == null ? new ArrayList<ParamInfo>() : Arrays.asList(params);
     }
 
-    public Integer invoke(@Nullable Context context,
-                          @NonNull Map<String, Object> params,
+    public Integer invoke(Context context, Map<String, Object> params,
                           int requestCode, int enterAnim, int exitAnim, String action) {
         if (null == context) {
             return -1;

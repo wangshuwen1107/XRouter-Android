@@ -1,7 +1,5 @@
 package cn.cheney.xrouter.core.invok;
 
-import androidx.annotation.NonNull;
-
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +14,7 @@ public abstract class Invokable<R> {
     Class<?> clazz;
     List<ParamInfo> params;
 
-    public R invoke(@NonNull Map<String, Object> params) {
+    public R invoke(Map<String, Object> params) {
         return null;
     }
 

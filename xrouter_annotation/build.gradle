@@ -10,5 +10,5 @@ publish {
     artifactId = 'annotation'
     publishVersion = '1.0.0'
     desc = 'this is a xRouter annotation'
-    website = 'https://github.com/novoda/bintray-release'
+    website = 'https://github.com/wangshuwen1107/XRouter'
 }
