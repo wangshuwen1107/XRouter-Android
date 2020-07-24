@@ -2,11 +2,8 @@ apply plugin: 'java-library'
 apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
-    if (DEBUG == '1') {
-        implementation project(":xrouter_annotation")
-    } else {
-        implementation 'cn.cheney.xrouter:annotation:1.0.0'
-    }
+    implementation project(":xrouter_annotation")
+    //implementation 'cn.cheney.xrouter:annotation:1.0.0'
     implementation 'com.google.auto.service:auto-service:1.0-rc4'
     implementation 'com.squareup:javapoet:1.10.0'
 }

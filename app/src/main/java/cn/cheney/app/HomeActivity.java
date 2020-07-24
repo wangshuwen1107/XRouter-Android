@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
@@ -16,6 +18,9 @@ public class HomeActivity extends AppCompatActivity {
 
     @XParam()
     Book book;
+
+    @XParam()
+    List<String> infoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

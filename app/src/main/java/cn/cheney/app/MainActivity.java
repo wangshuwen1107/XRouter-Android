@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
                         .call(new RouteCallback() {
                             @Override
                             public void onResult(Map<String, Object> result) {
-                                Logger.d("getaaa bookReturn= " + result);
+                                Logger.d("Error  bookReturn= " + result);
                             }
                         });
-                Logger.d("getaaa bookError= " + bookError);
+                Logger.d(" bookError= " + bookError);
             }
         });
 
@@ -97,7 +97,14 @@ public class MainActivity extends AppCompatActivity {
                         .call();
 
                 Logger.d("Route test Module page1 requestCode= " + requestCode);
+            }
+        });
 
+        findViewById(R.id.btn6).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                XRouter.method("home/setBookInfo?info={\"name\":\"Go\"}")
+                        .call();
             }
         });
     }

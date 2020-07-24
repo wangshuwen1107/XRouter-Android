@@ -1,7 +1,2 @@
 rootProject.name = 'XRouter'
-
-if (DEBUG == '1') {
-    include ':app', ':xrouter_core', ':xrouter_compiler', ':xrouter_annotation', ':m_test'
-} else {
-    include ':app', ':m_test'
-}
+include ':app', ':xrouter_core', ':xrouter_compiler', ':xrouter_annotation', ':m_test'

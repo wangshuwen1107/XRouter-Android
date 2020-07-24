@@ -18,6 +18,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -173,9 +174,18 @@ public class ModuleClassGenerator {
             } else {
                 paramsInfoSeg.append("new $T($S,$T.class),");
             }
+            TypeMirror paramType = variableElement.asType();
+            //擦除泛型[因为Map<String>.class 不允许]
+            if (paramType instanceof DeclaredType) {
+                DeclaredType paramDeclaredType = (DeclaredType) paramType;
+                if (!paramDeclaredType.getTypeArguments().isEmpty()) {
+                    paramType = holder.types.erasure(paramType);
+                    Logger.d("erasure " + paramType.toString());
+                }
+            }
             paramsInfoSegList.add(paramInfoType);
             paramsInfoSegList.add(getParamName(xParam, variableElement.getSimpleName().toString()));
-            paramsInfoSegList.add(variableElement.asType());
+            paramsInfoSegList.add(paramType);
         }
         paramsInfoSeg.append("))");
 
@@ -224,11 +234,18 @@ public class ModuleClassGenerator {
         StringBuilder paramsInfoSeg = new StringBuilder();
         List<Object> allInfoSegList = new ArrayList<>();
         List<Object> paramsInfoSegList = new ArrayList<>();
-
         boolean hasCallback = false;
         if (null != parameters && !parameters.isEmpty()) {
             for (VariableElement variableElement : parameters) {
                 javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
+                //擦除泛型[因为Map<String>.class 不允许]
+                if (methodParamType instanceof DeclaredType) {
+                    DeclaredType methodParamDeclaredType = (DeclaredType) methodParamType;
+                    if (!methodParamDeclaredType.getTypeArguments().isEmpty()) {
+                        methodParamType = holder.types.erasure(methodParamType);
+                        Logger.d("erasure " + methodParamType.toString());
+                    }
+                }
                 String key;
                 XParam xParam = variableElement.getAnnotation(XParam.class);
                 if (variableElement.asType().toString().equals(XTypeMirror.CALLBACK)) {

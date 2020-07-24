@@ -39,4 +39,11 @@
         android:text="跨模块调用Test Page1" />
 
 
+
+    <Button
+        android:id="@+id/btn6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MAP 传参" />
+
 </LinearLayout>

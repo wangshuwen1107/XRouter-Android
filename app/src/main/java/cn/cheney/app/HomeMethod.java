@@ -2,7 +2,10 @@ package cn.cheney.app;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
@@ -21,7 +24,6 @@ public class HomeMethod implements IMethod {
         return book;
     }
 
-
     @XMethod(name = "getAsyncBookName")
     public static void getAsyncBookName(@XParam(name = "book") Book book, RouteCallback callback) {
         Log.i(TAG, "getBookName  =" + book);
@@ -30,12 +32,13 @@ public class HomeMethod implements IMethod {
         callback.onResult(map);
     }
 
-    @XMethod(name = "getBookName2")
-    public static Book getBookName() {
-        Log.i(TAG, "getBookName2 is called   ");
-        Book book = new Book();
-        book.name = "php";
-        return book;
+    @XMethod(name = "setBookInfo")
+    public static List<String> setBookInfo(@XParam(name = "info") Map<String, String> info) {
+        for (Map.Entry<String, String> stringStringEntry : info.entrySet()) {
+            Log.i(TAG, "setBookInfo is called " + stringStringEntry.getKey()
+                    + " =" + stringStringEntry.getValue());
+        }
+        return new ArrayList<>();
     }
 
 }
