@@ -1,5 +1,6 @@
 package cn.cheney.xrouter.core.call;
 
+import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -110,5 +111,8 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
     }
 
     public abstract R call();
+
+    public abstract R call(Context context);
+
 
 }

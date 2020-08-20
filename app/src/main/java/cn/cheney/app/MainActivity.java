@@ -3,7 +3,6 @@ package cn.cheney.app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -11,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Map;
 
-import cn.cheney.xrouter.core.RouteCallback;
+import cn.cheney.xrouter.core.callback.RouteCallback;
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.util.Logger;
@@ -25,16 +24,12 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Integer requestCode = XRouter.page("home/page?book={\"name\":\"Kotlin\"}")
-//                        .action("cn.cheney.xrouter")
-//                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
-//                        .requestCode(1000)
-//                        .call();
-//                Logger.d("Route Page requestCode= " + requestCode);
-                //生成Intent.
-                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                //启动摄像头应用程序
-                startActivityForResult(intent, 2000);
+                Integer requestCode = XRouter.page("home/page?book={\"name\":\"Kotlin\"}")
+                        .action("cn.cheney.xrouter")
+                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
+                        .requestCode(1000)
+                        .call();
+                Logger.d("Route Page requestCode= " + requestCode);
             }
         });
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
@@ -42,15 +37,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-
-                MethodCall<Book> bookMethodCall = XRouter.<Book>method("home/getBookName?book={\"name\":\"Kotlin\"}");
-
+                MethodCall<Book> bookMethodCall = XRouter.<Book>method(
+                        "home/getBookName?book={\"name\":\"Kotlin\"}");
                 Book bookReturn = bookMethodCall.call();
                 Logger.d("getSyncBookName bookReturn= " + bookReturn
                         + " isAsync=" + bookMethodCall.isAsync());
             }
         });
-
         findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,12 +55,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResult(Map<String, Object> result) {
                         Logger.d("getAsyncBookName bookReturn= "
-                                + " isAsync=" + methodCall.isAsync());
+                                + result + " isAsync=" + methodCall.isAsync());
                     }
                 });
             }
         });
-
         findViewById(R.id.btn4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 Logger.d(" bookError= " + bookError);
             }
         });
-
         findViewById(R.id.btn5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 Logger.d("Route test Module page1 requestCode= " + requestCode);
             }
         });
-
         findViewById(R.id.btn6).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

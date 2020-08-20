@@ -8,10 +8,12 @@ import android.text.TextUtils;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.call.PageCall;
+import cn.cheney.xrouter.core.callback.EmptyActivityLifecycleCallBack;
 import cn.cheney.xrouter.core.exception.RouterErrorHandler;
 import cn.cheney.xrouter.core.exception.RouterException;
 import cn.cheney.xrouter.core.interceptor.BuildInvokeInterceptor;
@@ -46,6 +48,8 @@ public class XRouter {
     private List<RouterInterceptor> mInterceptorList;
 
     private ParamParser paramParser = new DefaultParser();
+
+    private RouterErrorHandler mErrorHandler;
 
     private XRouter() {
         mRouteModules = new RouteModuleManager();
@@ -103,6 +107,21 @@ public class XRouter {
         return new MethodCall<>(uriStr);
     }
 
+
+    public void invokeCallback(String requestId, Map<String, Object> resultMap) {
+        RequestManager.getInstance().invokeCallback(requestId, resultMap);
+    }
+
+    public void addInterceptor(RouterInterceptor interceptor) {
+        if (!mInterceptorList.contains(interceptor)) {
+            mInterceptorList.add(interceptor);
+        }
+    }
+
+    public void setErrorHandler(RouterErrorHandler errorHandler) {
+        this.mErrorHandler = errorHandler;
+    }
+
     public boolean build(BaseCall call) {
         mInterceptorList.add(new BuildInvokeInterceptor());
         RealChain realChain = new RealChain(call, mInterceptorList);
@@ -114,17 +133,6 @@ public class XRouter {
         return true;
     }
 
-    public void addInterceptor(RouterInterceptor interceptor) {
-        if (!mInterceptorList.contains(interceptor)) {
-            mInterceptorList.add(interceptor);
-        }
-    }
-
-    private RouterErrorHandler mErrorHandler;
-
-    public void setErrorHandler(RouterErrorHandler errorHandler) {
-        this.mErrorHandler = errorHandler;
-    }
 
     public void onError(String url, String errorMsg) {
         if (null != mErrorHandler) {

@@ -53,7 +53,7 @@ public class ModuleClassGenerator {
      */
     public void generateJavaFile() {
         TypeMirror baseModuleType = holder.elementUtils
-                .getTypeElement(XTypeMirror.BASEMODULE).asType();
+                .getTypeElement(XTypeMirror.BASE_MODULE).asType();
 
         TypeSpec typeSpec = TypeSpec.classBuilder(generatorClassName)
                 .superclass(TypeName.get(baseModuleType))
@@ -104,19 +104,13 @@ public class ModuleClassGenerator {
     public void generateSeg(TypeElement classType, String path) {
         TypeMirror typeActivity = holder.elementUtils
                 .getTypeElement(XTypeMirror.ACTIVITY).asType();
-
-        TypeMirror typeMethod = holder.elementUtils
-                .getTypeElement(XTypeMirror.I_METHOD).asType();
-
-
         if (holder.types.isSubtype(classType.asType(), typeActivity)) {
             addActivityInvoke(classType, path);
-        } else if (holder.types.isSubtype(classType.asType(), typeMethod)) {
-            for (Element element : classType.getEnclosedElements()) {
-                if (element instanceof ExecutableElement) {
-                    ExecutableElement executableElement = (ExecutableElement) element;
-                    addMethodInvoke(holder, classType, executableElement);
-                }
+        }
+        for (Element element : classType.getEnclosedElements()) {
+            if (element instanceof ExecutableElement) {
+                ExecutableElement executableElement = (ExecutableElement) element;
+                addMethodInvoke(holder, classType, executableElement);
             }
         }
     }
@@ -234,7 +228,7 @@ public class ModuleClassGenerator {
         StringBuilder paramsInfoSeg = new StringBuilder();
         List<Object> allInfoSegList = new ArrayList<>();
         List<Object> paramsInfoSegList = new ArrayList<>();
-        boolean hasCallback = false;
+        boolean hasRequestId = false;
         if (null != parameters && !parameters.isEmpty()) {
             for (VariableElement variableElement : parameters) {
                 javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
@@ -246,24 +240,16 @@ public class ModuleClassGenerator {
                         Logger.d("erasure " + methodParamType.toString());
                     }
                 }
-                String key;
                 XParam xParam = variableElement.getAnnotation(XParam.class);
-                if (variableElement.asType().toString().equals(XTypeMirror.CALLBACK)) {
-                    if (hasCallback) {
-                        Logger.e(String.format("[%s] [%s] only one RouteCallback !!",
+                String key = getParamName(xParam, variableElement.getSimpleName().toString());
+                if (key.equals(XParam.RequestId)) {
+                    if (hasRequestId) {
+                        Logger.e(String.format("[%s] [%s] have illegal key requestId",
                                 classType.getQualifiedName(),
                                 methodElement.getSimpleName()));
                         return;
                     }
-                    key = GenerateFileConstant.CALLBACK_KEY;
-                    hasCallback = true;
-                } else {
-                    key = getParamName(xParam, variableElement.getSimpleName().toString());
-                    if (key.equals(GenerateFileConstant.CALLBACK_KEY)) {
-                        Logger.e(String.format("[%s] [%s] have illegal key ROUTE_CALLBACK",
-                                classType.getQualifiedName(),
-                                methodElement.getSimpleName()));
-                    }
+                    hasRequestId = true;
                 }
                 if (parameters.indexOf(variableElement) == parameters.size() - 1) {
                     paramSeg.append("($T)params.get($S)");
@@ -322,7 +308,7 @@ public class ModuleClassGenerator {
         allInfoSegList.add(classType);
         allInfoSegList.add(module);
         allInfoSegList.add(xMethod.name());
-        allInfoSegList.add(hasCallback);
+        allInfoSegList.add(hasRequestId);
         allInfoSegList.addAll(paramsInfoSegList);
 
         TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr, allInfoSegList.toArray())

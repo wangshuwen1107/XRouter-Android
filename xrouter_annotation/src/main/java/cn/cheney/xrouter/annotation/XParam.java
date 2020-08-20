@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface XParam {
     String name() default "";
+    String Context = "__Context__";
+    String RequestId = "__RequestId__";
 }

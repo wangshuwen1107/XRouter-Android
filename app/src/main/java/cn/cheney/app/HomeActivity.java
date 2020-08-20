@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
+import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
@@ -30,5 +31,11 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.i(TAG, "onCreate book=" + book);
     }
+
+    @XMethod(name = "activityMethod")
+    public static void activityMethod(){
+
+    }
+
 
 }

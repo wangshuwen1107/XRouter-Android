@@ -10,7 +10,7 @@ import cn.cheney.xrouter.compiler.contant.TypeKind;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.BOOLEAN;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.BYTE;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.CHAR;
-import static cn.cheney.xrouter.compiler.contant.XTypeMirror.DOUBEL;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.DOUBLE;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.FLOAT;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.INTEGER;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.LONG;
@@ -55,7 +55,7 @@ public class TypeUtils {
                 return TypeKind.LONG.ordinal();
             case FLOAT:
                 return TypeKind.FLOAT.ordinal();
-            case DOUBEL:
+            case DOUBLE:
                 return TypeKind.DOUBLE.ordinal();
             case BOOLEAN:
                 return TypeKind.BOOLEAN.ordinal();
