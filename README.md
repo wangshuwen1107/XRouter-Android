@@ -87,10 +87,10 @@ public class HomeMethod implements IMethod {
     }
 	//异步方法，必须包含RouteCallback参数
     @XMethod(name = "getAsyncBookName")
-	public static void getAsyncBookName(@XParam(name = "book") Book book, RouteCallback callback) {
+	public static void getAsyncBookName(@XParam(name = "book") Book book) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("book", book);
-        callback.onResult(map);
+        XRouter.getInstance().invokeCallback(requestId, map);
     }
 }
  ```
