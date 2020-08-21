@@ -79,7 +79,7 @@ public class TestActivity extends Activity {
 
 //此时对应路由scheme://home/getBookName
 @XRoute(module = "home")
-public class HomeMethod implements IMethod {
+public class HomeMethod{
     //同步方法
     @XMethod(name = "getBookName")
     public static Book getBookName(@XParam(name = "book") Book book) {
@@ -94,6 +94,7 @@ public class HomeMethod implements IMethod {
     }
 }
  ```
+
  3.调用
 ```java
 //跳转界面
