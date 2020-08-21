@@ -19,7 +19,7 @@ public class HomeMethod {
     private static final String TAG = HomeMethod.class.getSimpleName();
 
     @XMethod(name = "getBookName")
-    public static Book getBookName(@XParam(name = XParam.Context) Context context) {
+    public static Book getBookName(Context context) {
         Log.i(TAG, "getBookName context=" + context);
         Book book = new Book();
         book.name = "从入门到放弃";

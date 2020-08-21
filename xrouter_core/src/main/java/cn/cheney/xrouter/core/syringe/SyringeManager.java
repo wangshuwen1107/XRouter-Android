@@ -24,9 +24,7 @@ public class SyringeManager {
         if (null == syringe) {
             try {
                 syringe = (Syringe) Class.forName(getFileName(packageName, className)).newInstance();
-                if (null != syringe) {
-                    syringeMap.put(className, syringe);
-                }
+                syringeMap.put(className, syringe);
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

@@ -93,6 +93,7 @@ public class XRouter {
         }
         Syringe syringe = mSyringeManager.getSyringe(activity);
         if (null == syringe) {
+            Logger.e("inject activity syringe not found");
             return;
         }
         syringe.inject(activity);

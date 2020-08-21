@@ -228,7 +228,9 @@ public class ModuleClassGenerator {
         StringBuilder paramsInfoSeg = new StringBuilder();
         List<Object> allInfoSegList = new ArrayList<>();
         List<Object> paramsInfoSegList = new ArrayList<>();
+
         boolean hasRequestId = false;
+        boolean hasContext = false;
         if (null != parameters && !parameters.isEmpty()) {
             for (VariableElement variableElement : parameters) {
                 javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
@@ -242,14 +244,27 @@ public class ModuleClassGenerator {
                 }
                 XParam xParam = variableElement.getAnnotation(XParam.class);
                 String key = getParamName(xParam, variableElement.getSimpleName().toString());
+                //如果是context类型 key=XParam.Context
+                if (variableElement.asType().toString().equals(XTypeMirror.CONTEXT)) {
+                    key = XParam.Context;
+                }
                 if (key.equals(XParam.RequestId)) {
                     if (hasRequestId) {
-                        Logger.e(String.format("[%s] [%s] have illegal key requestId",
+                        Logger.e(String.format("[%s] [%s] have repeat key requestId",
                                 classType.getQualifiedName(),
                                 methodElement.getSimpleName()));
                         return;
                     }
                     hasRequestId = true;
+                }
+                if (key.equals(XParam.Context)) {
+                    if (hasContext) {
+                        Logger.e(String.format("[%s] [%s] have repeat key context",
+                                classType.getQualifiedName(),
+                                methodElement.getSimpleName()));
+                        return;
+                    }
+                    hasContext = true;
                 }
                 if (parameters.indexOf(variableElement) == parameters.size() - 1) {
                     paramSeg.append("($T)params.get($S)");
