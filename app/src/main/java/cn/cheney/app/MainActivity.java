@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn6).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                XRouter.method("home/setBookInfo?info={\"name\":\"Go\"}")
+                XRouter.method("home/setBookInfo?info={\"key\":{\"name\":\"wang\"}}")
                         .call();
             }
         });

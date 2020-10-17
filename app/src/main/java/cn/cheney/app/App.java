@@ -15,20 +15,22 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        XRouter.init(this, "dc");
+        XRouter.init(this, "cheney");
+        //url 拦截
         XRouter.getInstance().addInterceptor(new RouterInterceptor() {
             @Override
-            public Invokable intercept(Chain chain) {
-                BaseCall call = chain.call();
+            public Invokable<?> intercept(Chain chain) {
+                BaseCall<?, ?> call = chain.call();
                 String urlStr = call.getUri().toString();
-                Logger.d(" RouterInterceptor urlStr=" + urlStr);
+                Logger.d("RouterInterceptor url=" + urlStr);
                 return chain.proceed(call);
             }
         });
+
         XRouter.getInstance().setErrorHandler(new RouterErrorHandler() {
             @Override
             public void onError(String url, String errorMsg) {
-                Logger.e("Url:" + url + ", errorMsg:" + errorMsg);
+                Logger.e("url=" + url + ", errorMsg=" + errorMsg);
             }
         });
     }

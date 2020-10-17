@@ -1,6 +1,6 @@
-```
-多模块路由通讯框架
-```
+![](media/XRouter.png)
+
+# XRRouter
 
 #### 最新版本
 |  模块 | xrouter_annotation  |  xrouter_complier|xrouter_core|
@@ -27,8 +27,11 @@ dependencies {
 }
  ```
 #### 功能&说明
-* 目前只支持activity,method的路由
-* 采用协议调用无需依赖任何接口协议
+url : `scheme://moduleName/methodName?key=value`
+* 协议方法必须为static
+* 支持任意数据类型路由传参
+
+
 
 #### 功能使用
 1.初始化
@@ -62,7 +65,6 @@ public class App extends Application {
  ```
 2.注解
  ```java
-//此时对应路由scheme://test/page1
 @XRoute(path = "page1", module = "test")
 public class TestActivity extends Activity {
 
@@ -77,7 +79,6 @@ public class TestActivity extends Activity {
     }
 }
 
-//此时对应路由scheme://home/getBookName
 @XRoute(module = "home")
 public class HomeMethod{
     //同步方法
@@ -105,7 +106,7 @@ Integer requestCode = XRouter.page("home/page")
                         .requestCode(1000)
                         .call();
  //调用同步方法                     
- Book book = new Book();
+Book book = new Book();
                 book.name = "Kotlin";
                 Book bookReturn = XRouter.<Book>method("home/getBookName")
                         .put("book", book)
@@ -120,6 +121,7 @@ Integer requestCode = XRouter.page("home/page")
                                 Logger.d("getAsyncBookName bookReturn= " + result);
                             }
                         });
+
 
 ```
 #### 混淆配置

@@ -27,8 +27,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.alibaba:fastjson:1.2.23'
-//    api project(":xrouter_annotation")
-    api 'cn.cheney.xrouter:annotation:1.0.2'
+    api project(":xrouter_annotation")
+//    api 'cn.cheney.xrouter:annotation:1.0.2'
 }
 
 
