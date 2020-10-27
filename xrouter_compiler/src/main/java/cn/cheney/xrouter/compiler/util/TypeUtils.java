@@ -13,7 +13,9 @@ import static cn.cheney.xrouter.compiler.contant.XTypeMirror.CHAR;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.DOUBLE;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.FLOAT;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.INTEGER;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.LIST;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.LONG;
+import static cn.cheney.xrouter.compiler.contant.XTypeMirror.MAP;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.PARCELABLE;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.SERIALIZABLE;
 import static cn.cheney.xrouter.compiler.contant.XTypeMirror.SHORT;
@@ -43,8 +45,14 @@ public class TypeUtils {
         if (typeMirror.getKind().isPrimitive()) {
             return element.asType().getKind().ordinal();
         }
-        Logger.d("typeExchange =" + typeMirror.toString());
-        switch (typeMirror.toString()) {
+        String typeStr = typeMirror.toString();
+        Logger.d("页面入参 " + element.getSimpleName() + "->" + typeStr);
+        if (typeStr.startsWith(LIST)) {
+            typeStr = SERIALIZABLE;
+        } else if (typeStr.startsWith(MAP)) {
+            typeStr = SERIALIZABLE;
+        }
+        switch (typeStr) {
             case BYTE:
                 return TypeKind.BYTE.ordinal();
             case SHORT:
@@ -63,6 +71,8 @@ public class TypeUtils {
                 return TypeKind.CHAR.ordinal();
             case STRING:
                 return TypeKind.STRING.ordinal();
+            case SERIALIZABLE:
+                return  TypeKind.SERIALIZABLE.ordinal();
             default:
                 if (types.isSubtype(typeMirror, parcelableType)) {
                     return TypeKind.PARCELABLE.ordinal();

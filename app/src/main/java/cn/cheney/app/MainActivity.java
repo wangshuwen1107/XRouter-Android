@@ -8,6 +8,9 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.cheney.xrouter.core.callback.RouteCallback;
@@ -24,7 +27,15 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer requestCode = XRouter.page("home/page?book={\"name\":\"Kotlin\"}")
+                List<String> infoList = new ArrayList<>();
+                infoList.add("value");
+
+                Map<String,String> map = new HashMap<>();
+                map.put("key","value");
+
+                Integer requestCode = XRouter.page("home/page")
+                        .put("infoList", infoList)
+                        .put("infoMap", map)
                         .action("cn.cheney.xrouter")
                         .anim(R.anim.enter_bottom, R.anim.exit_bottom)
                         .requestCode(1000)

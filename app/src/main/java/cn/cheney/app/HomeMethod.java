@@ -36,9 +36,9 @@ public class HomeMethod {
     }
 
     @XMethod(name = "setBookInfo")
-    public static List<String> setBookInfo(@XParam(name = "info") Map<String, Book> info) {
-        for (Map.Entry<String, Book> entry : info.entrySet()) {
-            Book book = entry.getValue();
+    public static List<String> setBookInfo(@XParam(name = "info") Map<String, Object> info) {
+        for (Map.Entry<String, Object> entry : info.entrySet()) {
+            Object book = entry.getValue();
             Log.i(TAG, "setBookInfo  KEY:" + entry.getKey() + "|VALUE:" + book);
         }
         return new ArrayList<>();

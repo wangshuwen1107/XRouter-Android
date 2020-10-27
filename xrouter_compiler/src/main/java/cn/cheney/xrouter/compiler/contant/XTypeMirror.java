@@ -13,6 +13,8 @@ public class XTypeMirror {
     public static final String CHAR = LANG + ".Character";
     public static final String STRING = LANG + ".String";
     public static final String SERIALIZABLE = "java.io.Serializable";
+    public static final String LIST = "java.util.List";
+    public static final String MAP = "java.util.Map";
     //android
     public static final String PARCELABLE = "android.os.Parcelable";
     public static final String ACTIVITY = "android.app.Activity";
