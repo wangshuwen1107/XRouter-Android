@@ -6,7 +6,6 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.sun.tools.javac.util.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public class ModuleClassGenerator {
         for (Element element : classType.getEnclosedElements()) {
             if (element instanceof ExecutableElement) {
                 ExecutableElement executableElement = (ExecutableElement) element;
-                addMethodInvoke(holder, classType, executableElement);
+                addMethodInvoke(classType, executableElement);
             }
         }
     }
@@ -188,12 +187,7 @@ public class ModuleClassGenerator {
     }
 
 
-    private void addMethodInvoke(XRouterProcessor.Holder holder,
-                                 TypeElement classType,
-                                 ExecutableElement methodElement) {
-        TypeMirror paramInfoType = holder.elementUtils
-                .getTypeElement(XTypeMirror.PARAM_INFO).asType();
-
+    private void addMethodInvoke(TypeElement classType, ExecutableElement methodElement) {
         XMethod xMethod = methodElement.getAnnotation(XMethod.class);
         if (null == xMethod) {
             return;
@@ -211,84 +205,12 @@ public class ModuleClassGenerator {
                     methodElement.getSimpleName()));
             return;
         }
+
         TypeMirror returnType = methodElement.getReturnType();
         boolean isReturnVoid = TypeKind.VOID.equals(returnType.getKind());
-
         List<? extends VariableElement> parameters = methodElement.getParameters();
-
-        //TestModule.testMethod()
-        List<Object> paramsSegList = new ArrayList<>();
-        paramsSegList.add(classType);
-        paramsSegList.add(methodElement.getSimpleName().toString());
-
-        StringBuilder paramSeg = new StringBuilder();
-        if (isReturnVoid) {
-            paramSeg.append("$T.$L(");
-        } else {
-            paramSeg.append("return $T.$L(");
-        }
-
-        StringBuilder paramsInfoSeg = new StringBuilder();
-        //整体构造MethodInvokable的value
+        //new MethodInvokable()所有参数的值
         List<Object> allInfoSegList = new ArrayList<>();
-        //构造paramInfo的value
-        List<Object> paramsInfoSegList = new ArrayList<>();
-
-        boolean hasRequestId = false;
-        boolean hasContext = false;
-        if (null != parameters && !parameters.isEmpty()) {
-            for (VariableElement variableElement : parameters) {
-                boolean isNeedConvert = false;
-                javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
-                //擦除泛型[因为Map<String>.class 不允许]
-                if (methodParamType instanceof DeclaredType) {
-                    DeclaredType methodParamDeclaredType = (DeclaredType) methodParamType;
-                    if (!methodParamDeclaredType.getTypeArguments().isEmpty()) {
-                        isNeedConvert = true;
-                        Logger.d("泛型 " + methodParamType.toString());
-                    }
-                }
-                XParam xParam = variableElement.getAnnotation(XParam.class);
-                String key = getParamName(xParam, variableElement.getSimpleName().toString());
-                //如果是context类型 key=XParam.Context
-                if (variableElement.asType().toString().equals(XTypeMirror.CONTEXT)) {
-                    key = XParam.Context;
-                }
-                if (key.equals(XParam.RequestId)) {
-                    if (hasRequestId) {
-                        Logger.e(String.format("[%s] [%s] have repeat key requestId",
-                                classType.getQualifiedName(),
-                                methodElement.getSimpleName()));
-                        return;
-                    }
-                    hasRequestId = true;
-                }
-                if (key.equals(XParam.Context)) {
-                    if (hasContext) {
-                        Logger.e(String.format("[%s] [%s] have repeat key context",
-                                classType.getQualifiedName(),
-                                methodElement.getSimpleName()));
-                        return;
-                    }
-                    hasContext = true;
-                }
-                if (parameters.indexOf(variableElement) == parameters.size() - 1) {
-                    paramSeg.append("($T)params.get($S)");
-                    paramsInfoSeg.append("new $T($S,$T.class)");
-                } else {
-                    paramSeg.append("($T)params.get($S),");
-                    paramsInfoSeg.append("new $T($S,$T.class),");
-                }
-                paramsSegList.add(methodParamType);
-                paramsSegList.add(key);
-
-                paramsInfoSegList.add(paramInfoType);
-                paramsInfoSegList.add(getParamName(xParam, variableElement.getSimpleName().toString()));
-                paramsInfoSegList.add(methodParamType);
-
-            }
-        }
-        paramSeg.append(")");
         //返回类型的泛型className
         TypeName returnClassName;
         if (!isReturnVoid) {
@@ -296,16 +218,11 @@ public class ModuleClassGenerator {
         } else {
             returnClassName = ClassName.bestGuess("java.lang.Void");
         }
-        ParameterizedTypeName methodInvokableType =
-                ParameterizedTypeName.get(ClassName.get("cn.cheney.xrouter.core.invok", "MethodInvokable"), returnClassName);
-        /*
-         *   new MethodInvokable(RouteType.METHOD,YourClazz.class,module,path) {
-         *       @Override
-         *       public Object invoke(Map<String, Object> params) {
-         *         return YourClass.YourMethod(params.get(yourKey));
-         *       }
-         *     }
-         */
+        MethodParamCodeBean methodParamCodeBean = generateParamCode(classType, methodElement, parameters);
+        if (null == methodParamCodeBean) {
+            return;
+        }
+        //Override invoke
         MethodSpec.Builder invokeBuilder = MethodSpec.methodBuilder("invoke")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
@@ -313,25 +230,28 @@ public class ModuleClassGenerator {
                         ClassName.get(Map.class),
                         ClassName.get(String.class),
                         ClassName.get(Object.class)), "params")
-                .addStatement(paramSeg.toString(), paramsSegList.toArray())
+                .addStatement(methodParamCodeBean.invokeImplDesc.toString(),
+                        methodParamCodeBean.invokeImplValueList.toArray())
                 .returns(returnClassName);
-
         if (isReturnVoid) {
             invokeBuilder.addStatement("return null");
         }
-
+        //new MethodInvokable(RouteType.METHOD,YourClazz.class,module,path)
         String methodInvokeClassStr = "$T.METHOD,$T.class,$S,$S,$L";
-        if (!paramsInfoSeg.toString().isEmpty()) {
-            methodInvokeClassStr += "," + paramsInfoSeg.toString();
-        }
 
+        if (!methodParamCodeBean.paramsInfoDesc.toString().isEmpty()) {
+            methodInvokeClassStr += "," + methodParamCodeBean.paramsInfoDesc.toString();
+        }
+        Logger.d(" " + methodInvokeClassStr);
         allInfoSegList.add(RouteType.class);
         allInfoSegList.add(classType);
         allInfoSegList.add(module);
         allInfoSegList.add(xMethod.name());
-        allInfoSegList.add(hasRequestId);
-        allInfoSegList.addAll(paramsInfoSegList);
-
+        allInfoSegList.add(methodParamCodeBean.isASync);
+        allInfoSegList.addAll(methodParamCodeBean.paramsInfoValueList);
+        //MethodInvokable<R>的类型
+        ParameterizedTypeName methodInvokableType = ParameterizedTypeName.get(XTypeMirror.CLASSNAME_METHOD_INVOKABLE
+               , returnClassName);
         TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr, allInfoSegList.toArray())
                 .addSuperinterface(methodInvokableType)
                 .addMethod(invokeBuilder.build())
@@ -340,73 +260,98 @@ public class ModuleClassGenerator {
     }
 
 
-    private Pair<Pair<String, List<Object>>,
-            Pair<String, List<Object>>> newParamInfo(String className,
-                                                     String methodName,
-                                                     List<? extends VariableElement> parameters) {
+    /**
+     * @param classType     类
+     * @param methodElement 方法
+     * @param parameters    方法参数
+     * @return new ParamInfo("key1", Clazz),new ParamInfo("key2", Clazz)...
+     * YourClass.YourMethod(params.get ( yourKey))
+     */
+    private MethodParamCodeBean generateParamCode(TypeElement classType,
+                                                  ExecutableElement methodElement,
+                                                  List<? extends VariableElement> parameters) {
+        boolean isReturnVoid = TypeKind.VOID.equals(methodElement.getReturnType().getKind());
         TypeMirror paramInfoType = holder.elementUtils
                 .getTypeElement(XTypeMirror.PARAM_INFO).asType();
-        //new ParamInfo()描述
-        StringBuilder paramsInfoDesc = new StringBuilder();
-        //new ParamInfo() value
-        List<Object> paramsInfoValueList = new ArrayList<>();
 
-        boolean hasRequestId = false;
-        boolean hasContext = false;
-        if (null == parameters || parameters.isEmpty()) {
-           // return Pair.of(paramsInfoDesc.toString(), paramsInfoValueList);
+        MethodParamCodeBean paramCodeBean = new MethodParamCodeBean();
+        paramCodeBean.invokeImplValueList.add(classType);
+        paramCodeBean.invokeImplValueList.add(methodElement.getSimpleName().toString());
+
+        if (isReturnVoid) {
+            paramCodeBean.invokeImplDesc.append("$T.$L(");
+        } else {
+            paramCodeBean.invokeImplDesc.append("return $T.$L(");
         }
-        for (VariableElement variableElement : parameters) {
-            boolean isNeedConvert = false;
-            javax.lang.model.type.TypeMirror methodParamType = variableElement.asType();
-            //擦除泛型[因为Map<String>.class 不允许]
-            if (methodParamType instanceof DeclaredType) {
-                DeclaredType methodParamDeclaredType = (DeclaredType) methodParamType;
-                if (!methodParamDeclaredType.getTypeArguments().isEmpty()) {
-                    isNeedConvert = true;
-                    Logger.d("泛型 " + methodParamType.toString());
+        List<String> alreadyExistList = new ArrayList<>();
+        if (null != parameters && !parameters.isEmpty()) {
+            for (VariableElement variableElement : parameters) {
+                boolean isGenerics = false;
+                javax.lang.model.type.TypeMirror paramType = variableElement.asType();
+                if (paramType instanceof DeclaredType) {
+                    DeclaredType methodParamDeclaredType = (DeclaredType) paramType;
+                    if (!methodParamDeclaredType.getTypeArguments().isEmpty()) {
+                        isGenerics = true;
+                        Logger.d("泛型 " + paramType.toString());
+                    }
                 }
-            }
-            XParam xParam = variableElement.getAnnotation(XParam.class);
-            String key = getParamName(xParam, variableElement.getSimpleName().toString());
-            //如果是context类型 key=XParam.Context
-            if (variableElement.asType().toString().equals(XTypeMirror.CONTEXT)) {
-                key = XParam.Context;
-            }
-            if (key.equals(XParam.RequestId)) {
-                if (hasRequestId) {
-                    Logger.e(String.format("[%s] [%s] have repeat key requestId", className,
-                            methodName));
+                XParam xParam = variableElement.getAnnotation(XParam.class);
+                String key = getParamName(xParam, variableElement.getSimpleName().toString());
+                if (alreadyExistList.contains(key)) {
+                    Logger.e(String.format("[%s] [%s] have repeat key %s", classType.getSimpleName().toString(),
+                            methodElement.getSimpleName().toString(), key));
                     return null;
                 }
-                hasRequestId = true;
-            }
-            if (key.equals(XParam.Context)) {
-                if (hasContext) {
-//                        Logger.e(String.format("[%s] [%s] have repeat key context",
-//                                classType.getQualifiedName(),
-//                                methodElement.getSimpleName()));
-                    Logger.e(String.format("[%s] [%s] have repeat key context", className,
-                            methodName));
-                    return null;
+                if (variableElement.asType().toString().equals(XTypeMirror.CONTEXT)) {
+                    key = XParam.Context;
                 }
-                hasContext = true;
+                alreadyExistList.add(key);
+                if (parameters.indexOf(variableElement) == parameters.size() - 1) {
+                    if (isGenerics) {
+                        paramCodeBean.paramsInfoDesc.append("new $T($S,new $T(){}.getType())");
+                    } else {
+                        paramCodeBean.paramsInfoDesc.append("new $T($S,$T.class)");
+                    }
+                    paramCodeBean.invokeImplDesc.append("($T)params.get($S)");
+                } else {
+                    if (isGenerics) {
+                        paramCodeBean.paramsInfoDesc.append("new $T($S,new $T(){}.getType()),");
+                    } else {
+                        paramCodeBean.paramsInfoDesc.append("new $T($S,$T.class),");
+                    }
+                    paramCodeBean.invokeImplDesc.append("($T)params.get($S),");
+                }
+
+                paramCodeBean.paramsInfoValueList.add(paramInfoType);
+                paramCodeBean.paramsInfoValueList.add(getParamName(xParam,
+                        variableElement.getSimpleName().toString()));
+                if (isGenerics) {
+                    ParameterizedTypeName methodInvokableType = ParameterizedTypeName.get(
+                            XTypeMirror.CLASSNAME_TYPE_REFERENCE, TypeName.get(paramType));
+                    paramCodeBean.paramsInfoValueList.add(methodInvokableType);
+                } else {
+                    paramCodeBean.paramsInfoValueList.add(paramType);
+                }
+
+                paramCodeBean.invokeImplValueList.add(paramType);
+                paramCodeBean.invokeImplValueList.add(key);
             }
-            if (parameters.indexOf(variableElement) == parameters.size() - 1) {
-                //paramSeg.append("($T)params.get($S)");
-                paramsInfoDesc.append("new $T($S,$T.class)");
-            } else {
-                //paramSeg.append("($T)params.get($S),");
-                paramsInfoDesc.append("new $T($S,$T.class),");
-            }
-//                paramsSegList.add(methodParamType);
-//                paramsSegList.add(key);
-            paramsInfoValueList.add(paramInfoType);
-            paramsInfoValueList.add(getParamName(xParam, variableElement.getSimpleName().toString()));
-            paramsInfoValueList.add(methodParamType);
         }
-       // return Pair.of(paramsInfoDesc.toString(), paramsInfoValueList);
-        return null;
+        paramCodeBean.invokeImplDesc.append(")");
+        paramCodeBean.isASync = alreadyExistList.contains(XParam.RequestId);
+        return paramCodeBean;
     }
+
+
+    static class MethodParamCodeBean {
+        //new ParamInfo("key1", Clazz),new ParamInfo("key2", Clazz)...
+        StringBuilder paramsInfoDesc = new StringBuilder();
+        List<Object> paramsInfoValueList = new ArrayList<>();
+        //YourClass.YourMethod(params.get (yourKey))
+        StringBuilder invokeImplDesc = new StringBuilder();
+        List<Object> invokeImplValueList = new ArrayList<>();
+        boolean isASync;
+    }
+
 
 }

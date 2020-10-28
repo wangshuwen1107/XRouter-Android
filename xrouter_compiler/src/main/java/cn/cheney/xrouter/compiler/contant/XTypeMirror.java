@@ -1,5 +1,7 @@
 package cn.cheney.xrouter.compiler.contant;
 
+import com.squareup.javapoet.ClassName;
+
 public class XTypeMirror {
     //java
     private static final String LANG = "java.lang";
@@ -27,5 +29,10 @@ public class XTypeMirror {
     public static final String SYRINGE = "cn.cheney.xrouter.core.syringe.Syringe";
     public static final String PARAM_INFO = "cn.cheney.xrouter.core.invok.ParamInfo";
 
+    //ClassName
+    public static final ClassName CLASSNAME_TYPE_REFERENCE = ClassName.get("com.alibaba.fastjson",
+            "TypeReference");
+    public static final ClassName CLASSNAME_METHOD_INVOKABLE =  ClassName.get("cn.cheney.xrouter.core.invok",
+            "MethodInvokable");
 
 }
