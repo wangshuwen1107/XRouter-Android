@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 infoList.add("value");
                 Map<String, String> map = new HashMap<>();
                 map.put("key", "value");
-                Integer requestCode = XRouter.page("moduleA/page")
+                Integer requestCode = XRouter.page("moduleB/page")
                         .put("infoList", infoList)
                         .put("infoMap", map)
                         .action("cn.cheney.xrouter")
