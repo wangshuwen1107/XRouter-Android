@@ -65,33 +65,33 @@ public class App extends Application {
  ```
 2.注解
  ```java
-@XRoute(path = "page1", module = "test")
-public class TestActivity extends Activity {
+@XRoute(path = "pageName", module = "moduleName")
+public class YourActivity extends Activity {
 
-    @XParam(name = "testParam")
-    Book book;
+    @XParam(name = "paramObjectName")
+    Object book;
+    @XParam(name = "paramStrName")
+    String paramStr;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mtest_activity_1);
+        setContentView(R.layout.xxx);
         XRouter.getInstance().inject(this);
     }
 }
 
-@XRoute(module = "home")
-public class HomeMethod{
+@XRoute(module = "moduleName")
+public class YourModule{
     //同步方法
-    @XMethod(name = "getBookName")
-    public static Book getBookName(@XParam(name = "book") Book book) {
-        return book;
+    @XMethod(name = "methodA")
+    public static Object methodA(@XParam(name = "book") String paramValue) {
+        return "";
     }
-	//异步方法，必须包含RouteCallback参数
-    @XMethod(name = "getAsyncBookName")
-	public static void getAsyncBookName(@XParam(name = "book") Book book) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("book", book);
-        XRouter.getInstance().invokeCallback(requestId, map);
+	//异步方法，必须包含requestId参数
+    @XMethod(name = "asyncMethodB")
+	public static void asyncMethodB(@XParam(name = XParam.RequestId) String requestId) {
+        XRouter.getInstance().invokeCallback(requestId, new HashMap());
     }
 }
  ```
@@ -99,26 +99,24 @@ public class HomeMethod{
  3.调用
 ```java
 //跳转界面
-Integer requestCode = XRouter.page("home/page")
-                        .put("testParam", book)
+Integer requestCode = XRouter.page("moduleName/methodName")
+                        .put(key, value)
                         .action("cn.cheney.xrouter")
                         .anim(R.anim.enter_bottom, R.anim.exit_bottom)
                         .requestCode(1000)
                         .call();
- //调用同步方法                     
-Book book = new Book();
-                book.name = "Kotlin";
-                Book bookReturn = XRouter.<Book>method("home/getBookName")
-                        .put("book", book)
-                        .call();
-                Logger.d("getSyncBookName bookReturn= " + bookReturn);
  //调用同步方法
- XRouter.<Book>method("home/getAsyncBookName")
-                        .put("book", book)
+T result = XRouter.<T>method("moduleName/methodName")
+                 .put(key, value)
+                 .call();
+
+ //调用同步方法
+ XRouter.<T>method("moduleName/methodName")
+                        .put(key, value)
                         .call(new RouteCallback() {
                             @Override
                             public void onResult(Map<String, Object> result) {
-                                Logger.d("getAsyncBookName bookReturn= " + result);
+
                             }
                         });
 

@@ -29,6 +29,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation project(":xrouter_core")
     annotationProcessor project(':xrouter_compiler')
-//    implementation 'cn.cheney.xrouter:core:1.0.2'
-//    annotationProcessor 'cn.cheney.xrouter:compiler:1.0.2'
+//    implementation 'cn.cheney.xrouter:core:1.0.3'
+//    annotationProcessor 'cn.cheney.xrouter:compiler:1.0.3'
 }
