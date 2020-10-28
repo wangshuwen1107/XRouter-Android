@@ -8,9 +8,8 @@ import androidx.annotation.Nullable;
 
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.util.Logger;
 
-@XRoute(path = "page1", module = "test")
+@XRoute(path = "page1", module = "moduleD")
 public class TestActivity extends Activity {
 
 
@@ -21,9 +20,9 @@ public class TestActivity extends Activity {
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object bookReturn = XRouter.method("home/getBookName2")
+                Object bookReturn = XRouter.method("moduleA/getBookName")
                         .call();
-                Logger.d("getSyncBookName bookReturn= " + bookReturn);
+                AlertUtil.showAlert(TestActivity.this, "" + bookReturn);
             }
         });
     }

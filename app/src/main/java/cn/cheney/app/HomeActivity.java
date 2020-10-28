@@ -13,7 +13,7 @@ import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute(path = "page", module = "home")
+@XRoute(path = "page", module = "moduleB")
 public class HomeActivity extends AppCompatActivity {
 
     public static final String TAG = HomeActivity.class.getSimpleName();

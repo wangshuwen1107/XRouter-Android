@@ -29,8 +29,7 @@
         android:id="@+id/btn4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="错误协议调用" />
-
+        android:text="MAP泛型 传参" />
 
     <Button
         android:id="@+id/btn5"
@@ -38,12 +37,10 @@
         android:layout_height="wrap_content"
         android:text="跨模块调用Test Page1" />
 
-
-
     <Button
         android:id="@+id/btn6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MAP 传参" />
-
+        android:text="错误协议调用" />
 </LinearLayout>
+

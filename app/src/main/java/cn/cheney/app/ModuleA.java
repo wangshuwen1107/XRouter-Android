@@ -13,10 +13,10 @@ import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute(module = "home")
-public class HomeMethod {
+@XRoute(module = "moduleA")
+public class ModuleA {
 
-    private static final String TAG = HomeMethod.class.getSimpleName();
+    private static final String TAG = ModuleA.class.getSimpleName();
 
     @XMethod(name = "getBookName")
     public static Book getBookName(Context context) {
@@ -35,12 +35,14 @@ public class HomeMethod {
         XRouter.getInstance().invokeCallback(requestId, map);
     }
 
+
     @XMethod(name = "setBookInfo")
-    public static List<String> setBookInfo(@XParam(name = "info") Map<String, Object> info) {
-        for (Map.Entry<String, Object> entry : info.entrySet()) {
-            Object book = entry.getValue();
+    public static List<String> setBookInfo(Context context, @XParam(name = "info") Map<String, Book> info) {
+        for (Map.Entry<String, Book> entry : info.entrySet()) {
+            Book book = entry.getValue();
             Log.i(TAG, "setBookInfo  KEY:" + entry.getKey() + "|VALUE:" + book);
         }
+        AlertUtil.showAlert(context, "传参 =" + info);
         return new ArrayList<>();
     }
 

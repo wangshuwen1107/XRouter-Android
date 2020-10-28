@@ -1,9 +1,6 @@
 package cn.cheney.xrouter.core.invok;
 
-import com.alibaba.fastjson.TypeReference;
-
 import java.lang.reflect.Type;
-import java.util.Map;
 
 public class ParamInfo {
 
@@ -13,7 +10,6 @@ public class ParamInfo {
     public ParamInfo(String name, Type type) {
         this.name = name;
         this.type = type;
-        this.type = new TypeReference<Map<String, Object>>(){}.getType();
     }
 
     public String getName() {
