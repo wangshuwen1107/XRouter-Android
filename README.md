@@ -105,12 +105,12 @@ Integer requestCode = XRouter.page("moduleName/methodName")
                         .anim(R.anim.enter_bottom, R.anim.exit_bottom)
                         .requestCode(1000)
                         .call();
- //调用同步方法
+ //同步调用
 T result = XRouter.<T>method("moduleName/methodName")
                  .put(key, value)
                  .call();
 
- //调用同步方法
+ //异步调用
  XRouter.<T>method("moduleName/methodName")
                         .put(key, value)
                         .call(new RouteCallback() {
