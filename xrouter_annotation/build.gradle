@@ -1,14 +1,10 @@
 apply plugin: 'java-library'
-apply plugin: 'com.novoda.bintray-release'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 dependencies {
 }
 
-publish {
-    userOrg = 'wenwen'
-    groupId = 'cn.cheney.xrouter'
-    artifactId = 'annotation'
-    publishVersion = '1.0.3'
-    desc = 'this is a xRouter annotation'
-    website = 'https://github.com/wangshuwen1107/XRouter'
-}

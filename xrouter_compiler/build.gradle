@@ -1,18 +1,14 @@
 apply plugin: 'java-library'
-apply plugin: 'com.novoda.bintray-release'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 dependencies {
     implementation project(":xrouter_annotation")
    // implementation 'cn.cheney.xrouter:annotation:1.0.3'
-    implementation 'com.google.auto.service:auto-service:1.0-rc4'
+    compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc7'
     implementation 'com.squareup:javapoet:1.10.0'
-}
-
-publish {
-    userOrg = 'wenwen'
-    groupId = 'cn.cheney.xrouter'
-    artifactId = 'compiler'
-    publishVersion = '1.0.3'
-    desc = 'this is a xrouter compiler'
-    website = 'https://github.com/wangshuwen1107/XRouter'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc7'
 }

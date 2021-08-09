@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 29
@@ -21,6 +20,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 
@@ -32,11 +36,3 @@ dependencies {
 }
 
 
-publish {
-    userOrg = 'wenwen'
-    groupId = 'cn.cheney.xrouter'
-    artifactId = 'core'
-    publishVersion = '1.0.3'
-    desc = 'this is a xrouter core api'
-    website = 'https://github.com/wangshuwen1107/XRouter'
-}
