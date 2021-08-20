@@ -15,9 +15,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         XRouter.init(this, "cheney");
-
         //url 拦截
         XRouter.getInstance().addInterceptor(new RouterInterceptor() {
             @Override
@@ -28,7 +26,7 @@ public class App extends Application {
                 return chain.proceed(call);
             }
         });
-
+        //全局错误监听
         XRouter.getInstance().setErrorHandler(new RouterErrorHandler() {
             @Override
             public void onError(String url, String errorMsg) {

@@ -1,7 +1,8 @@
-package cn.cheney.app.activity;
+package cn.cheney.mtest.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,41 +10,42 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
 import java.util.Map;
 
-import cn.cheney.app.entity.Book;
-import cn.cheney.app.R;
+import cn.cheney.mtest.R;
+import cn.cheney.mtest.entity.Book;
 import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute( module = "moduleA",path = "page/a")
+@XRoute(module = "moduleA", path = "page/a")
 public class ActivityA extends AppCompatActivity {
-
-    public static final String TAG = ActivityA.class.getSimpleName();
-
     @XParam()
     Book book;
-
     @XParam()
     List<String> infoList;
-
     @XParam()
     Map<String, String> infoMap;
 
+    private TextView paramsText;
+
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test1);
         XRouter.getInstance().inject(this);
+
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
+        if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        setTitle("moduleB Page");
-        Log.i(TAG, "onCreate book=" + book);
-        Log.i(TAG, "onCreate infoList=" + infoList);
-        Log.i(TAG, "onCreate infoMap=" + infoMap);
+        setTitle("page/a");
+
+        paramsText = findViewById(R.id.params_txt);
+        paramsText.setText("Book:" + book + " \n" +
+                "infoList:" + infoList + " \n" +
+                "infoMap:" + infoMap + " \n");
     }
 
     @XMethod(name = "activityMethod")
@@ -52,8 +54,14 @@ public class ActivityA extends AppCompatActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.enter_bottom, 0);
+        overridePendingTransition(0, R.anim.exit_bottom);
     }
 }

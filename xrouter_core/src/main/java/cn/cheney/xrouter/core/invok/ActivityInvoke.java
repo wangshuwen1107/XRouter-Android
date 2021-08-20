@@ -52,10 +52,8 @@ public class ActivityInvoke extends Invokable<Integer> {
         } else {
             activity.startActivity(intent);
         }
-        if (enterAnim >= 0 || exitAnim >= 0) {
-            activity.overridePendingTransition(enterAnim >= 0 ? enterAnim : -1,
-                    enterAnim >= 0 ? enterAnim : -1);
-        }
+        activity.overridePendingTransition(enterAnim >= 0 ? enterAnim : -1,
+                exitAnim >= 0 ? exitAnim : -1);
         return requestCode >= 0 ? requestCode : 1;
     }
 
