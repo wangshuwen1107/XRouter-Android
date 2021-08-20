@@ -1,5 +1,12 @@
 apply plugin: 'java-library'
 
+ext {
+    PUBLISH_GROUP_ID = "io.github.wangshuwen1107"
+    PUBLISH_ARTIFACT_ID = 'xrouter-compiler'
+    PUBLISH_VERSION = '1.0.4'
+}
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -7,7 +14,7 @@ java {
 
 dependencies {
     implementation project(":xrouter_annotation")
-   // implementation 'cn.cheney.xrouter:annotation:1.0.3'
+//    implementation 'io.github.wangshuwen1107:xrouter-annotation:1.0.4'
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc7'
     implementation 'com.squareup:javapoet:1.10.0'
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc7'

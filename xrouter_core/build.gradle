@@ -1,5 +1,12 @@
 apply plugin: 'com.android.library'
 
+ext {
+    PUBLISH_GROUP_ID = "io.github.wangshuwen1107"
+    PUBLISH_ARTIFACT_ID = 'xrouter-core'
+    PUBLISH_VERSION = '1.0.4'
+}
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -29,10 +36,9 @@ android {
 
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     api 'com.alibaba:fastjson:1.2.23'
     api project(":xrouter_annotation")
-    //api 'cn.cheney.xrouter:annotation:1.0.3'
+//    api 'io.github.wangshuwen1107:xrouter-annotation:1.0.4'
 }
 
 

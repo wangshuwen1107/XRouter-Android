@@ -1,4 +1,4 @@
-package cn.cheney.app;
+package cn.cheney.app.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.cheney.app.AlertUtil;
+import cn.cheney.app.entity.Book;
+import cn.cheney.app.R;
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.callback.RouteCallback;
@@ -25,53 +28,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> infoList = new ArrayList<>();
-                infoList.add("value");
-                Map<String, String> map = new HashMap<>();
-                map.put("key", "value");
-                Integer requestCode = XRouter.page("moduleB/page")
-                        .put("infoList", infoList)
-                        .put("infoMap", map)
-                        .action("cn.cheney.xrouter")
-                        .anim(R.anim.enter_bottom, R.anim.exit_bottom)
-                        .requestCode(1000)
-                        .call();
 
-                Logger.d("Route Page requestCode= " + requestCode);
-            }
+        //路由跳转界面
+        findViewById(R.id.btn1).setOnClickListener(v -> {
+            List<String> infoList = new ArrayList<>();
+            infoList.add("value");
+            Map<String, String> map = new HashMap<>();
+            map.put("key", "value");
+            Integer requestCode = XRouter.page("moduleA/page/a")
+                    .put("infoList", infoList)
+                    .put("infoMap", map)
+                    .action("cn.cheney.xrouter")
+                    .anim(R.anim.enter_bottom,0)
+                    .requestCode(1000)
+                    .call();
+
+            Logger.d("Route Page requestCode= " + requestCode);
         });
 
-        findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Book book = new Book();
-                book.name = "Kotlin";
-                MethodCall<Book> bookMethodCall = XRouter.<Book>method(
-                        "moduleA/getBookName");
-                Book bookReturn = bookMethodCall.call();
-                AlertUtil.showAlert(MainActivity.this, bookReturn.toString());
-            }
+        //路由执行同步方法
+        findViewById(R.id.btn2).setOnClickListener(v -> {
+            Book book = new Book();
+            book.name = "Kotlin";
+            MethodCall<Book> bookMethodCall = XRouter.<Book>method(
+                    "moduleA/getBookName");
+            Book bookReturn = bookMethodCall.call();
+            AlertUtil.showAlert(MainActivity.this, bookReturn.toString());
         });
 
-
+        //路由执行异步方法
         findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Book book = new Book();
                 book.name = "Kotlin";
-                final MethodCall<Book> methodCall = XRouter.<Book>method("moduleA/getAsyncBookName")
-                        .put("book", book);
-                methodCall.call(new RouteCallback() {
-                    @Override
-                    public void onResult(Map<String, Object> result) {
-                        AlertUtil.showAlert(MainActivity.this, result.toString());
-                    }
-                });
+                XRouter.<Book>method("moduleA/getAsyncBookName")
+                        .put("book", book).call(result ->
+                        AlertUtil.showAlert(MainActivity.this, result.toString()));
             }
         });
+
+        //Uri里面传入Map类型
         findViewById(R.id.btn4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         .call(MainActivity.this);
             }
         });
+
 
         findViewById(R.id.btn5).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,11 +1,11 @@
-package cn.cheney.app;
+package cn.cheney.app.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Book implements Parcelable {
 
-    String name;
+    public String name;
 
     public String getName() {
         return name;

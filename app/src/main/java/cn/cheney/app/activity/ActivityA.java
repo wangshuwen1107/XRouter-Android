@@ -1,4 +1,4 @@
-package cn.cheney.app;
+package cn.cheney.app.activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,12 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
 import java.util.Map;
 
+import cn.cheney.app.entity.Book;
+import cn.cheney.app.R;
 import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute(path = "page", module = "moduleB")
+@XRoute( module = "moduleA",path = "page/a")
 public class ActivityA extends AppCompatActivity {
 
     public static final String TAG = ActivityA.class.getSimpleName();
@@ -49,5 +51,9 @@ public class ActivityA extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.enter_bottom, 0);
+    }
 }

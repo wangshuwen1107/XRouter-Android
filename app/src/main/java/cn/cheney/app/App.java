@@ -15,7 +15,9 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         XRouter.init(this, "cheney");
+
         //url 拦截
         XRouter.getInstance().addInterceptor(new RouterInterceptor() {
             @Override
