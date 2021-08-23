@@ -36,7 +36,7 @@ dependencies {
         implementation project(":xrouter_core")
         annotationProcessor project(':xrouter_compiler')
     } else {
-        implementation "cn.cheney.xrouter:core:$sdkVersion"
-        annotationProcessor "cn.cheney.xrouter:compiler:$sdkVersion"
+        implementation "io.github.wangshuwen1107:xrouter-core:$sdkVersion"
+        annotationProcessor "io.github.wangshuwen1107:xrouter-compiler:$sdkVersion"
     }
 }

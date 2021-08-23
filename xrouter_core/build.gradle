@@ -37,7 +37,6 @@ android {
 
 dependencies {
     api 'com.alibaba:fastjson:1.2.23'
-    api project(":xrouter_annotation")
     if(debug == "true"){
         api project(":xrouter_annotation")
     }else {
