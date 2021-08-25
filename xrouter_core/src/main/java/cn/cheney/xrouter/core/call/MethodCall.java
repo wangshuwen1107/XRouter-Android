@@ -4,11 +4,10 @@ import android.content.Context;
 
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.core.RequestManager;
-import cn.cheney.xrouter.core.callback.RouteCallback;
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.invok.MethodInvokable;
+import cn.cheney.xrouter.core.callback.RouteCallback;
 
-public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
+public class MethodCall<R> extends BaseCall<R> {
 
     public MethodCall(String uriStr) {
         super(uriStr);
@@ -38,13 +37,13 @@ public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
             this.paramsMap.put(XParam.RequestId, requestId);
             RequestManager.getInstance().addCallback(requestId, callback);
         }
-        if (!XRouter.getInstance().build(this)) {
+        R result = (R) XRouter.getInstance().proceed(context, this);
+        if (null == result) {
             if (null != callback) {
                 callback.onResult(null);
             }
-            return null;
         }
-        return invokable.invoke(paramsMap);
+        return result;
     }
 
     public MethodCall<R> put(String key, Object val) {
@@ -52,11 +51,4 @@ public class MethodCall<R> extends BaseCall<R, MethodInvokable<R>> {
         return this;
     }
 
-
-    public boolean isAsync() {
-        if (null == invokable) {
-            return false;
-        }
-        return invokable.isAsync();
-    }
 }

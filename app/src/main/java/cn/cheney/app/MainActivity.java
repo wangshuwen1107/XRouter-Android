@@ -31,15 +31,13 @@ public class MainActivity extends AppCompatActivity {
             infoList.add("stringValue");
             Map<String, String> map = new HashMap<>();
             map.put("key", "stringValue");
-            Integer requestCode = XRouter.page("moduleA/page/a")
+            XRouter.page("moduleA/page/a")
                     .put("infoList", infoList)
                     .put("infoMap", map)
                     .put("book", new Book("Java"))
                     .action("cn.cheney.xrouter")
                     .anim(R.anim.enter_bottom, R.anim.no_anim)
                     .call();
-
-            Logger.d("Route Page requestCode= " + requestCode);
         });
 
         //路由执行同步方法

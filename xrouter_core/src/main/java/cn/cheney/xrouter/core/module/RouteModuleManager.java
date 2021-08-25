@@ -17,6 +17,15 @@ public class RouteModuleManager {
     }
 
 
+    public Invokable getInvokable(String moduleName, String uriPath) {
+        BaseModule module = getModule(moduleName);
+        if (null == module) {
+            return null;
+        }
+        return module.getRouteMeta(uriPath);
+    }
+
+
     private BaseModule getModule(String moduleName) {
         if (TextUtils.isEmpty(moduleName)) {
             return null;
@@ -32,14 +41,6 @@ public class RouteModuleManager {
             }
         }
         return baseModule;
-    }
-
-    public Invokable getRouteMeta(String moduleName, String uriPath) {
-        BaseModule module = getModule(moduleName);
-        if (null == module) {
-            return null;
-        }
-        return module.getRouteMeta(uriPath);
     }
 
 }

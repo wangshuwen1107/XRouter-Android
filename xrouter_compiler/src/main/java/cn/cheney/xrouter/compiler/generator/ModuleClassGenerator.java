@@ -6,6 +6,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,6 +78,8 @@ public class ModuleClassGenerator {
      * public void load(Map<String, Invokable> routeMap) {}
      */
     private MethodSpec.Builder loadMethodBuilder() {
+        ParameterizedTypeName methodInvokableType = ParameterizedTypeName.
+                get(XTypeMirror.CLASSNAME_INVOKABLE, TypeVariableName.get("?"));
         return MethodSpec.methodBuilder("load")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(TypeName.VOID)
@@ -84,8 +87,7 @@ public class ModuleClassGenerator {
                 .addParameter(ParameterizedTypeName.get(
                         ClassName.get(Map.class),
                         ClassName.get(String.class),
-                        ClassName.get(holder.elementUtils
-                                .getTypeElement(XTypeMirror.INVOKABLE))),
+                        methodInvokableType),
                         "routeMap");
     }
 
@@ -251,7 +253,7 @@ public class ModuleClassGenerator {
         allInfoSegList.addAll(methodParamCodeBean.paramsInfoValueList);
         //MethodInvokable<R>的类型
         ParameterizedTypeName methodInvokableType = ParameterizedTypeName.get(XTypeMirror.CLASSNAME_METHOD_INVOKABLE
-               , returnClassName);
+                , returnClassName);
         TypeSpec methodInvoke = TypeSpec.anonymousClassBuilder(methodInvokeClassStr, allInfoSegList.toArray())
                 .addSuperinterface(methodInvokableType)
                 .addMethod(invokeBuilder.build())

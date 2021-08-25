@@ -2,8 +2,11 @@ package cn.cheney.xrouter.core;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -41,13 +44,13 @@ public class XRouter {
 
     private static boolean hasInit;
 
-    private RouteModuleManager mRouteModules;
+    private final RouteModuleManager mRouteModules;
 
-    private SyringeManager mSyringeManager;
+    private final SyringeManager mSyringeManager;
 
-    private List<RouterInterceptor> mInterceptorList;
+    private final List<RouterInterceptor> mInterceptorList;
 
-    private ParamParser paramParser = new DefaultParser();
+    private final ParamParser paramParser = new DefaultParser();
 
     private RouterErrorHandler mErrorHandler;
 
@@ -60,22 +63,22 @@ public class XRouter {
     public static XRouter getInstance() {
         if (!hasInit) {
             throw new RouterException("XRouter::Init::Invoke init(context) first!");
-        } else {
-            if (instance == null) {
-                synchronized (XRouter.class) {
-                    if (instance == null) {
-                        instance = new XRouter();
-                    }
+        }
+        if (instance == null) {
+            synchronized (XRouter.class) {
+                if (instance == null) {
+                    instance = new XRouter();
                 }
             }
-            return instance;
         }
+        return instance;
+
     }
 
     public static void init(Application context, String scheme) {
         context.registerActivityLifecycleCallbacks(new EmptyActivityLifecycleCallBack() {
             @Override
-            public void onActivityResumed(Activity activity) {
+            public void onActivityResumed(@NonNull Activity activity) {
                 super.onActivityResumed(activity);
                 sTopActivityRf = new WeakReference<>(activity);
             }
@@ -123,17 +126,11 @@ public class XRouter {
         this.mErrorHandler = errorHandler;
     }
 
-    public boolean build(BaseCall call) {
-        mInterceptorList.add(new BuildInvokeInterceptor());
+    public Object proceed(Context context, BaseCall<?> call) {
+        addInterceptor(new BuildInvokeInterceptor());
         RealChain realChain = new RealChain(call, mInterceptorList);
-        Invokable invokable = realChain.proceed(call);
-        if (null == invokable) {
-            return false;
-        }
-        call.setInvokable(invokable);
-        return true;
+        return realChain.proceed(context, call);
     }
-
 
     public void onError(String url, String errorMsg) {
         if (null != mErrorHandler) {
@@ -149,12 +146,8 @@ public class XRouter {
         return mRouteModules;
     }
 
-    private static String getUriSite(Uri uri) {
-        return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
-    }
-
-    public Object parse(BaseCall call, String paramName, String paramValue) {
-        Invokable invokable = XRouter.getInstance().getRouteModules().getRouteMeta(call.getModule(),
+    public Object parse(BaseCall<?> call, String paramName, String paramValue) {
+        Invokable<?> invokable = XRouter.getInstance().getRouteModules().getInvokable(call.getModule(),
                 call.getPath());
         if (null == invokable
                 || TextUtils.isEmpty(paramName)) {
@@ -174,4 +167,9 @@ public class XRouter {
         }
         return paramValue;
     }
+
+    private static String getUriSite(Uri uri) {
+        return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
+    }
+
 }

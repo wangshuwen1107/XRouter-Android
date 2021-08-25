@@ -18,7 +18,6 @@ public abstract class Invokable<R> {
         return null;
     }
 
-
     public RouteType getType() {
         return type;
     }

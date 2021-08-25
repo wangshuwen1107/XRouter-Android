@@ -10,15 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.invok.Invokable;
 
-public abstract class BaseCall<R, I extends Invokable<R>> {
+public abstract class BaseCall<R> {
 
     private String module;
     private String path;
     private Uri uri;
     Map<String, Object> paramsMap = new HashMap<>();
-    I invokable;
 
     BaseCall(String uriStr) {
         parseUri(uriStr);
@@ -46,14 +44,6 @@ public abstract class BaseCall<R, I extends Invokable<R>> {
 
     public Map<String, Object> getParamsMap() {
         return paramsMap;
-    }
-
-    public I getInvokable() {
-        return invokable;
-    }
-
-    public void setInvokable(I invokable) {
-        this.invokable = invokable;
     }
 
     private void parseUri(String uriStr) {

@@ -3,9 +3,8 @@ package cn.cheney.xrouter.core.call;
 import android.content.Context;
 
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.invok.ActivityInvoke;
 
-public class PageCall extends BaseCall<Integer, ActivityInvoke> {
+public class PageCall extends BaseCall<Integer> {
 
     private String action;
     private int enterAnim = -1;
@@ -61,14 +60,7 @@ public class PageCall extends BaseCall<Integer, ActivityInvoke> {
     }
 
     public Integer call(Context context) {
-        if (!XRouter.getInstance().build(this)) {
-            return null;
-        }
-        return invokable.invoke(context, paramsMap,
-                requestCode,
-                enterAnim,
-                exitAnim,
-                action);
+        return (Integer) XRouter.getInstance().proceed(context, this);
     }
 
 }

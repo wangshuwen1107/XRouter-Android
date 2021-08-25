@@ -34,5 +34,7 @@ public class XTypeMirror {
             "TypeReference");
     public static final ClassName CLASSNAME_METHOD_INVOKABLE =  ClassName.get("cn.cheney.xrouter.core.invok",
             "MethodInvokable");
+    public static final ClassName CLASSNAME_INVOKABLE =  ClassName.get("cn.cheney.xrouter.core.invok",
+            "Invokable");
 
 }

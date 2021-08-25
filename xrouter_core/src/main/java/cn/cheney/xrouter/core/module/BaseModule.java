@@ -14,7 +14,7 @@ public abstract class BaseModule {
 
     private String moduleName;
 
-    private Map<String, Invokable> mMethodsMap = new HashMap<>();
+    private Map<String, Invokable<?>> mMethodsMap = new HashMap<>();
 
     public BaseModule() {
         moduleName = getName();
@@ -27,10 +27,10 @@ public abstract class BaseModule {
 
     public abstract String getName();
 
-    public abstract void load(Map<String, Invokable> routeMap);
+    public abstract void load(Map<String, Invokable<?>> routeMap);
 
 
-    public Invokable getRouteMeta(String path) {
+    public Invokable<?> getRouteMeta(String path) {
         if (TextUtils.isEmpty(path)) {
             return null;
         }

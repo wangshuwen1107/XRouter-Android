@@ -3,10 +3,7 @@ package cn.cheney.app;
 import android.app.Application;
 
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.exception.RouterErrorHandler;
-import cn.cheney.xrouter.core.interceptor.RouterInterceptor;
-import cn.cheney.xrouter.core.invok.Invokable;
 import cn.cheney.xrouter.core.util.Logger;
 
 
@@ -17,15 +14,15 @@ public class App extends Application {
         super.onCreate();
         XRouter.init(this, "cheney");
         //url 拦截
-        XRouter.getInstance().addInterceptor(new RouterInterceptor() {
-            @Override
-            public Invokable<?> intercept(Chain chain) {
-                BaseCall<?, ?> call = chain.call();
-                String urlStr = call.getUri().toString();
-                Logger.d("RouterInterceptor url=" + urlStr);
-                return chain.proceed(call);
-            }
-        });
+//        XRouter.getInstance().addInterceptor(new RouterInterceptor() {
+//            @Override
+//            public Invokable<?> intercept(Chain chain) {
+//                BaseCall<?> call = chain.call();
+//                String urlStr = call.getUri().toString();
+//                Logger.d("RouterInterceptor url=" + urlStr);
+//                return chain.proceed(call);
+//            }
+//        });
         //全局错误监听
         XRouter.getInstance().setErrorHandler(new RouterErrorHandler() {
             @Override

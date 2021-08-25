@@ -1,2 +1,3 @@
 rootProject.name = 'XRouter'
 include ':app', ':xrouter_core', ':xrouter_compiler', ':xrouter_annotation',"m_test"
+include ':xrouter_plugin'

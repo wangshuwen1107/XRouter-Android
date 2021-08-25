@@ -1,18 +1,19 @@
 package cn.cheney.xrouter.core.interceptor;
 
+import android.content.Context;
+
 import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.exception.RouterException;
-import cn.cheney.xrouter.core.invok.Invokable;
 
 public interface RouterInterceptor {
 
-    Invokable intercept(Chain chain) throws RouterException;
+    Object intercept(Context context, Chain chain) throws RouterException;
 
     interface Chain {
 
-        BaseCall call();
+        BaseCall<?> call();
 
-        Invokable proceed(BaseCall call);
+        Object proceed(Context context, BaseCall<?> call);
 
         void shutDown(String reason);
     }
