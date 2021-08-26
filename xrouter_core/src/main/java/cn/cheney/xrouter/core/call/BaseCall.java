@@ -16,6 +16,7 @@ public abstract class BaseCall<R> {
     private String module;
     private String path;
     private Uri uri;
+    protected Context context;
     Map<String, Object> paramsMap = new HashMap<>();
 
     BaseCall(String uriStr) {
@@ -58,6 +59,9 @@ public abstract class BaseCall<R> {
         rebuild();
     }
 
+    public Context getContext() {
+        return context;
+    }
 
     private void rebuild() {
         this.module = uri.getHost();

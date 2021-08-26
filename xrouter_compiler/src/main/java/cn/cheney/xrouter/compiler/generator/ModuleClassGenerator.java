@@ -33,13 +33,13 @@ import cn.cheney.xrouter.constant.RouteType;
 
 public class ModuleClassGenerator {
 
-    private String generatorClassName;
+    private final String generatorClassName;
 
-    private String module;
+    private final String module;
 
-    private XRouterProcessor.Holder holder;
+    private final XRouterProcessor.Holder holder;
 
-    private MethodSpec.Builder loadMethodBuilder;
+    private final MethodSpec.Builder loadMethodBuilder;
 
 
     public ModuleClassGenerator(String module, XRouterProcessor.Holder holder) {
@@ -53,19 +53,12 @@ public class ModuleClassGenerator {
      * 最后生产java文件
      */
     public void generateJavaFile() {
-        TypeMirror baseModuleType = holder.elementUtils
-                .getTypeElement(XTypeMirror.BASE_MODULE).asType();
-
         TypeSpec typeSpec = TypeSpec.classBuilder(generatorClassName)
-                .superclass(TypeName.get(baseModuleType))
                 .addJavadoc(GenerateFileConstant.WARNING_TIPS)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(loadMethodBuilder.build())
-                .addMethod(getNameMethodBuilder.addStatement("return $S", module)
-                        .build())
                 .build();
-
-        JavaFile javaFile = JavaFile.builder("cn.cheney.xrouter", typeSpec)
+        JavaFile javaFile = JavaFile.builder(GenerateFileConstant.ROUTER_PACKAGE_NAME, typeSpec)
                 .build();
         try {
             javaFile.writeTo(holder.filer);
@@ -82,22 +75,14 @@ public class ModuleClassGenerator {
                 get(XTypeMirror.CLASSNAME_INVOKABLE, TypeVariableName.get("?"));
         return MethodSpec.methodBuilder("load")
                 .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.STATIC)
                 .returns(TypeName.VOID)
-                .addAnnotation(Override.class)
                 .addParameter(ParameterizedTypeName.get(
                         ClassName.get(Map.class),
                         ClassName.get(String.class),
                         methodInvokableType),
                         "routeMap");
     }
-
-    /**
-     * public String getName() {return "home";}
-     */
-    private MethodSpec.Builder getNameMethodBuilder = MethodSpec.methodBuilder("getName")
-            .addModifiers(Modifier.PUBLIC)
-            .returns(String.class)
-            .addAnnotation(Override.class);
 
 
     /**
@@ -142,7 +127,7 @@ public class ModuleClassGenerator {
         paramsInfoSeg.append("$L.put($S,new $T($T.ACTIVITY,$T.class,$S,$S");
 
         paramsInfoSegList.add("routeMap");
-        paramsInfoSegList.add(path);
+        paramsInfoSegList.add(module + "/" + path);
         paramsInfoSegList.add(typeActivityInvoke);
         paramsInfoSegList.add(RouteType.class);
         paramsInfoSegList.add(activityType);
@@ -258,7 +243,7 @@ public class ModuleClassGenerator {
                 .addSuperinterface(methodInvokableType)
                 .addMethod(invokeBuilder.build())
                 .build();
-        loadMethodBuilder.addStatement("$L.put($S,$L)", "routeMap", xMethod.name(), methodInvoke);
+        loadMethodBuilder.addStatement("$L.put($S,$L)", "routeMap", module + "/" + xMethod.name(), methodInvoke);
     }
 
 

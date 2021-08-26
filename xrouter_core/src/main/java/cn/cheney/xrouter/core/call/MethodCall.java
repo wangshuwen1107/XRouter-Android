@@ -31,13 +31,14 @@ public class MethodCall<R> extends BaseCall<R> {
         if (context == null) {
             context = XRouter.getInstance().getTopActivity();
         }
+        this.context = context;
         this.paramsMap.put(XParam.Context, context);
         if (null != callback) {
             String requestId = RequestManager.getInstance().generateRequestId();
             this.paramsMap.put(XParam.RequestId, requestId);
             RequestManager.getInstance().addCallback(requestId, callback);
         }
-        R result = (R) XRouter.getInstance().proceed(context, this);
+        R result = (R) XRouter.getInstance().proceed(this);
         if (null == result) {
             if (null != callback) {
                 callback.onResult(null);

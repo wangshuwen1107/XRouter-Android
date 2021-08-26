@@ -28,7 +28,7 @@ public class ActivityInvoke extends Invokable<Integer> {
         this.path = path;
         this.module = module;
         this.clazz = className;
-        this.params = params == null ? new ArrayList<ParamInfo>() : Arrays.asList(params);
+        this.params = params == null ? new ArrayList<>() : Arrays.asList(params);
     }
 
     public Integer invoke(Context context, Map<String, Object> params,

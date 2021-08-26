@@ -60,7 +60,8 @@ public class PageCall extends BaseCall<Integer> {
     }
 
     public Integer call(Context context) {
-        return (Integer) XRouter.getInstance().proceed(context, this);
+        this.context = context;
+        return (Integer) XRouter.getInstance().proceed(this);
     }
 
 }

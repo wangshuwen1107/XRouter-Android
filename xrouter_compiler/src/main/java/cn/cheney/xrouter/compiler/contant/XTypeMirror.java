@@ -23,12 +23,10 @@ public class XTypeMirror {
     public static final String CONTEXT = "android.content.Context";
     //XRouter
     public static final String CALLBACK = "cn.cheney.xrouter.core.RouteCallback";
-    public static final String BASE_MODULE = "cn.cheney.xrouter.core.module.BaseModule";
     public static final String INVOKABLE = "cn.cheney.xrouter.core.invok.Invokable";
     public static final String ACTIVITY_INVOKE = "cn.cheney.xrouter.core.invok.ActivityInvoke";
     public static final String SYRINGE = "cn.cheney.xrouter.core.syringe.Syringe";
     public static final String PARAM_INFO = "cn.cheney.xrouter.core.invok.ParamInfo";
-
     //ClassName
     public static final ClassName CLASSNAME_TYPE_REFERENCE = ClassName.get("com.alibaba.fastjson",
             "TypeReference");

@@ -16,7 +16,6 @@ import cn.cheney.mtest.AlertUtil;
 import cn.cheney.mtest.entity.Book;
 import cn.cheney.xrouter.core.XRouter;
 import cn.cheney.xrouter.core.call.MethodCall;
-import cn.cheney.xrouter.core.callback.RouteCallback;
 import cn.cheney.xrouter.core.util.Logger;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,14 +58,10 @@ public class MainActivity extends AppCompatActivity {
                     AlertUtil.showAlert(MainActivity.this, result.toString()));
         });
 
+
         findViewById(R.id.btn4).setOnClickListener(v -> {
             Book bookError = XRouter.<Book>method("sssss")
-                    .call(new RouteCallback() {
-                        @Override
-                        public void onResult(Map<String, Object> result) {
-                            AlertUtil.showAlert(MainActivity.this, "错误异步返回结果=" + result);
-                        }
-                    });
+                    .call(result -> AlertUtil.showAlert(MainActivity.this, "错误异步返回结果=" + result));
             AlertUtil.showAlert(MainActivity.this, "错误同步返回结果=" + bookError);
         });
     }

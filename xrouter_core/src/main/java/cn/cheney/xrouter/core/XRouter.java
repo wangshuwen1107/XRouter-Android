@@ -2,14 +2,15 @@ package cn.cheney.xrouter.core;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,6 @@ import cn.cheney.xrouter.core.interceptor.RealChain;
 import cn.cheney.xrouter.core.interceptor.RouterInterceptor;
 import cn.cheney.xrouter.core.invok.Invokable;
 import cn.cheney.xrouter.core.invok.ParamInfo;
-import cn.cheney.xrouter.core.module.RouteModuleManager;
 import cn.cheney.xrouter.core.parser.DefaultParser;
 import cn.cheney.xrouter.core.parser.ParamParser;
 import cn.cheney.xrouter.core.syringe.Syringe;
@@ -36,6 +36,8 @@ public class XRouter {
 
     private static final String DEFAULT_SCHEME = "xrouter";
 
+    private static final String ROUTER_LOAD_CLASS = "cn.cheney.xrouter.XRouterModule_Loader";
+
     public static String sScheme = DEFAULT_SCHEME;
 
     private static WeakReference<Activity> sTopActivityRf;
@@ -44,18 +46,17 @@ public class XRouter {
 
     private static boolean hasInit;
 
-    private final RouteModuleManager mRouteModules;
+    private final static Map<String, Invokable<?>> sRouterMap = new HashMap<>();
 
     private final SyringeManager mSyringeManager;
 
     private final List<RouterInterceptor> mInterceptorList;
 
-    private final ParamParser paramParser = new DefaultParser();
+    private final ParamParser mParamParser = new DefaultParser();
 
     private RouterErrorHandler mErrorHandler;
 
     private XRouter() {
-        mRouteModules = new RouteModuleManager();
         mInterceptorList = new ArrayList<>();
         mSyringeManager = new SyringeManager();
     }
@@ -86,7 +87,18 @@ public class XRouter {
         if (!TextUtils.isEmpty(scheme)) {
             sScheme = scheme;
         }
+        loadRouters();
         hasInit = true;
+    }
+
+    private static void loadRouters() {
+        try {
+            Class<?> loadClass = Class.forName(ROUTER_LOAD_CLASS);
+            Method loadInto = loadClass.getMethod("loadInto", Map.class);
+            loadInto.invoke(null, sRouterMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void inject(Activity activity) {
@@ -126,10 +138,10 @@ public class XRouter {
         this.mErrorHandler = errorHandler;
     }
 
-    public Object proceed(Context context, BaseCall<?> call) {
+    public Object proceed(BaseCall<?> call) {
         addInterceptor(new BuildInvokeInterceptor());
         RealChain realChain = new RealChain(call, mInterceptorList);
-        return realChain.proceed(context, call);
+        return realChain.proceed(call);
     }
 
     public void onError(String url, String errorMsg) {
@@ -142,15 +154,14 @@ public class XRouter {
         return sTopActivityRf.get();
     }
 
-    public RouteModuleManager getRouteModules() {
-        return mRouteModules;
+
+    public static Map<String, Invokable<?>> getRouterMap() {
+        return sRouterMap;
     }
 
     public Object parse(BaseCall<?> call, String paramName, String paramValue) {
-        Invokable<?> invokable = XRouter.getInstance().getRouteModules().getInvokable(call.getModule(),
-                call.getPath());
-        if (null == invokable
-                || TextUtils.isEmpty(paramName)) {
+        Invokable<?> invokable = sRouterMap.get(call.getModule() + "/" + call.getPath());
+        if (null == invokable || TextUtils.isEmpty(paramName)) {
             return paramValue;
         }
         List<ParamInfo> params = invokable.getParams();
@@ -158,7 +169,7 @@ public class XRouter {
             if (paramName.equals(param.getName())) {
                 Object parseObject = null;
                 try {
-                    parseObject = paramParser.parse(paramName, paramValue, param.getType());
+                    parseObject = mParamParser.parse(paramName, paramValue, param.getType());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

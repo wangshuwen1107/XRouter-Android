@@ -13,9 +13,9 @@ java {
 }
 
 dependencies {
-    if(debug == "true"){
+    if (debug == "true") {
         implementation project(":xrouter_annotation")
-    }else {
+    } else {
         implementation "io.github.wangshuwen1107:xrouter-annotation:$sdkVersion"
     }
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc7'

@@ -18,9 +18,9 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.cheney.xrouter.plugin.consts.XRouterConstant;
+import cn.cheney.xrouter.plugin.consts.PluginConstant;
 
-import static cn.cheney.xrouter.plugin.consts.XRouterConstant.MODULE_CLASS_DIR;
+import static cn.cheney.xrouter.plugin.consts.PluginConstant.ROUTER_MODULE_CLASS_DIR;
 
 public class ScannerUtils {
 
@@ -35,7 +35,7 @@ public class ScannerUtils {
                 String name = jarEntry.getName();
                 if (name.endsWith(SdkConstants.DOT_CLASS)) {
                     String classname = trimName(name, 0).replace(File.separatorChar, '.');
-                    if (classname.startsWith(XRouterConstant.MODULE_CLASS_PREFIX)) {
+                    if (classname.startsWith(PluginConstant.MODULE_CLASS_PREFIX)) {
                         Pattern pattern = Pattern.compile("\\d+$");
                         Matcher matcher = pattern.matcher(classname);
                         //不是匿名内部类
@@ -57,14 +57,14 @@ public class ScannerUtils {
             return null;
         }
         List<String> classList = new ArrayList<>();
-        File moduleDir = new File(dir, MODULE_CLASS_DIR);
+        File moduleDir = new File(dir, ROUTER_MODULE_CLASS_DIR);
         if (moduleDir.exists() && moduleDir.isDirectory()) {
             Collection<File> classFiles = FileUtils.listFiles(moduleDir, new SuffixFileFilter(SdkConstants.DOT_CLASS,
                     IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
             for (File file : classFiles) {
                 String className = trimName(file.getAbsolutePath(), dir.getAbsolutePath().length() + 1);
                 className = className.replace(File.separatorChar, '.');
-                if (className.contains(XRouterConstant.MODULE_CLASS_PREFIX)) {
+                if (className.contains(PluginConstant.MODULE_CLASS_PREFIX)) {
                     Pattern pattern = Pattern.compile("\\d+$");
                     Matcher matcher = pattern.matcher(className);
                     //不是匿名内部类

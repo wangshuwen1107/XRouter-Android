@@ -9,6 +9,7 @@ import com.android.build.api.transform.TransformException;
 import com.android.build.api.transform.TransformInput;
 import com.android.build.api.transform.TransformInvocation;
 import com.android.build.gradle.internal.pipeline.TransformManager;
+import com.android.tools.r8.com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import cn.cheney.xrouter.plugin.utils.GenerateCodeUtils;
 import cn.cheney.xrouter.plugin.utils.ScannerUtils;
 import cn.cheney.xrouter.plugin.utils.XLogger;
 
@@ -81,9 +83,14 @@ class XRouterTransform extends Transform {
                 }
             }
         }
+        File dest = transformInvocation.getOutputProvider().getContentLocation("XRouter",
+                TransformManager.CONTENT_CLASS,
+                ImmutableSet.of(QualifiedContent.Scope.PROJECT),
+                Format.DIRECTORY);
         for (String moduleStr : allModuleClassList) {
             XLogger.debug("scan===>" + moduleStr);
         }
+        GenerateCodeUtils.generateClass(dest.getAbsolutePath(), allModuleClassList);
 
     }
 }
