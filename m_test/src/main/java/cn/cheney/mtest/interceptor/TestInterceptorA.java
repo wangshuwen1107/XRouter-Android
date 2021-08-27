@@ -11,7 +11,7 @@ public class TestInterceptorA implements RouterInterceptor {
     @Override
     public Object intercept(Chain chain) {
         Logger.d("TestInterceptorA url=" + chain.call().getUri().toString());
-        return chain.proceed(chain.call());
+        return chain.proceed();
     }
 
 }

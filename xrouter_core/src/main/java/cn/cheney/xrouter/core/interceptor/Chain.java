@@ -6,5 +6,5 @@ public interface Chain {
 
     BaseCall<?> call();
 
-    Object proceed(BaseCall<?> call);
+    Object proceed();
 }

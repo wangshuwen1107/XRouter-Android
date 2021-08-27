@@ -149,7 +149,7 @@ public class XRouter {
                 mInterceptorManager.getInterceptorList(call.getModule(), call.getPath());
         interceptorList.add(new BuildInvokeInterceptor());
         RealChain realChain = new RealChain(call, interceptorList);
-        return realChain.proceed(call);
+        return realChain.proceed();
     }
 
     public Activity getTopActivity() {

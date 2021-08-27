@@ -24,7 +24,7 @@ public class RealChain implements Chain {
     }
 
     @Override
-    public Object proceed(BaseCall<?> call) {
+    public Object proceed() {
         index++;
         RouterInterceptor routerInterceptor = null;
         if (index <= interceptorList.size() - 1) {
