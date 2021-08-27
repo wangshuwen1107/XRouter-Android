@@ -31,6 +31,8 @@ public class InterceptorClassGenerator {
 
     private final MethodSpec.Builder loadMethodBuilder;
 
+    private boolean hasBuildVar = false;
+
     public InterceptorClassGenerator(XRouterProcessor.Holder holder) {
         this.generatorClassName = GenerateFileConstant.INTERCEPTOR_FILE_PREFIX +
                 UUID.randomUUID().toString().replace("-", "");
@@ -50,10 +52,11 @@ public class InterceptorClassGenerator {
         }
         ParameterizedTypeName listInterceptorDescType = ParameterizedTypeName.
                 get(ClassName.get(List.class), CLASSNAME_INTERCEPTOR_DESC);
+        if (!hasBuildVar){
+            loadMethodBuilder.addStatement("$T $L", listInterceptorDescType, "interceptorList");
+            hasBuildVar= true;
+        }
         for (String interceptorStr : allList) {
-            if (allList.indexOf(interceptorStr) == 0){
-                loadMethodBuilder.addStatement("$T $L", listInterceptorDescType, "interceptorList");
-            }
             loadMethodBuilder.beginControlFlow("if (map.containsKey($S))", interceptorStr);
             loadMethodBuilder.addStatement("interceptorList = map.get($S)", interceptorStr);
             loadMethodBuilder.nextControlFlow("else");

@@ -57,7 +57,7 @@ public class InterceptorManager {
             }
         }
         //排序
-        Collections.sort(filterDescList, (o1, o2) -> o1.getPriority() - o2.getPriority());
+        Collections.sort(filterDescList, (o1, o2) -> o2.getPriority() - o1.getPriority());
         List<RouterInterceptor> interceptorList = new ArrayList<>();
         synchronized (mLock) {
             for (InterceptorDesc interceptorDesc : filterDescList) {

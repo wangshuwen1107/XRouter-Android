@@ -73,7 +73,7 @@ public class XRouter {
     }
 
     public static void init(Application context, String scheme) {
-        if (sHasInit){
+        if (sHasInit) {
             return;
         }
         sHasInit = true;
