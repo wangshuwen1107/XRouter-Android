@@ -12,7 +12,8 @@ public class BuildInvokeInterceptor implements RouterInterceptor {
     @Override
     public Object intercept(Chain chain) {
         BaseCall<?> call = chain.call();
-        Invokable<?> invokable = XRouter.getRouterMap().get(call.getModule() + "/" + call.getPath());
+        Invokable<?> invokable = XRouter.getInstance().getRouterMap()
+                .get(call.getModule() + "/" + call.getPath());
         if (null == invokable) {
             return null;
         }

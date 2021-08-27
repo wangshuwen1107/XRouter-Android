@@ -25,9 +25,11 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import cn.cheney.xrouter.annotation.XInterceptor;
 import cn.cheney.xrouter.annotation.XMethod;
 import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
+import cn.cheney.xrouter.compiler.generator.InterceptorClassGenerator;
 import cn.cheney.xrouter.compiler.generator.ModuleClassGenerator;
 import cn.cheney.xrouter.compiler.generator.ParamClassGenerator;
 import cn.cheney.xrouter.compiler.util.CheckUtil;
@@ -59,6 +61,7 @@ public class XRouterProcessor extends AbstractProcessor {
         supportTypes.add(XRoute.class.getCanonicalName());
         supportTypes.add(XParam.class.getCanonicalName());
         supportTypes.add(XMethod.class.getCanonicalName());
+        supportTypes.add(XInterceptor.class.getCanonicalName());
         return supportTypes;
     }
 
@@ -72,6 +75,7 @@ public class XRouterProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         processRoute(roundEnvironment);
         processParams(roundEnvironment);
+        processInterceptor(roundEnvironment);
         return true;
     }
 
@@ -179,9 +183,24 @@ public class XRouterProcessor extends AbstractProcessor {
             groupClassGenerator.generateSeg(typeElement, route.path());
         }
         for (Map.Entry<String, ModuleClassGenerator> entry : moduleMap.entrySet()) {
-            ModuleClassGenerator groupClassGenerator = entry.getValue();
-            groupClassGenerator.generateJavaFile();
+            ModuleClassGenerator moduleClassGenerator = entry.getValue();
+            moduleClassGenerator.generateJavaFile();
         }
+    }
+
+
+    private void processInterceptor(RoundEnvironment roundEnvironment) {
+        Set<? extends Element> elementSet = roundEnvironment.getElementsAnnotatedWith(XInterceptor.class);
+        if (null == elementSet || elementSet.isEmpty()) {
+            return;
+        }
+        InterceptorClassGenerator interceptorClassGenerator = new InterceptorClassGenerator(holder);
+        for (Element element : elementSet) {
+            TypeElement typeElement = (TypeElement) element;
+            XInterceptor interceptor = typeElement.getAnnotation(XInterceptor.class);
+            interceptorClassGenerator.generateSeg(interceptor, typeElement);
+        }
+        interceptorClassGenerator.generateJavaFile();
     }
 
 
@@ -191,9 +210,6 @@ public class XRouterProcessor extends AbstractProcessor {
         public Types types;
         public Filer filer;
         public TypeUtils typeUtils;
-
     }
-
-
 }
 

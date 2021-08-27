@@ -1,4 +1,4 @@
-package cn.cheney.xrouter.plugin.utils;
+package cn.cheney.xrouter.plugin;
 
 import com.android.SdkConstants;
 
@@ -18,14 +18,12 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.cheney.xrouter.plugin.consts.PluginConstant;
+import cn.cheney.xrouter.constant.GenerateFileConstant;
 
-import static cn.cheney.xrouter.plugin.consts.PluginConstant.ROUTER_MODULE_CLASS_DIR;
-
-public class ScannerUtils {
+public class CodeScanner {
 
 
-    public static List<String> scanJar(File dir) {
+    public static List<String> scanJar(String prefix, File dir) {
         List<String> classList = new ArrayList<>();
         try {
             JarFile jarFile = new JarFile(dir);
@@ -35,8 +33,8 @@ public class ScannerUtils {
                 String name = jarEntry.getName();
                 if (name.endsWith(SdkConstants.DOT_CLASS)) {
                     String classname = trimName(name, 0).replace(File.separatorChar, '.');
-                    if (classname.startsWith(PluginConstant.MODULE_CLASS_PREFIX)) {
-                        Pattern pattern = Pattern.compile("\\d+$");
+                    if (classname.startsWith(prefix)) {
+                        Pattern pattern = Pattern.compile("\\$\\d+$");
                         Matcher matcher = pattern.matcher(classname);
                         //不是匿名内部类
                         if (!matcher.find()) {
@@ -52,20 +50,20 @@ public class ScannerUtils {
     }
 
 
-    public static List<String> scanDir(File dir) {
+    public static List<String> scanDir(String prefix, File dir) {
         if (null == dir || !dir.exists() || !dir.isDirectory()) {
-            return null;
+            return new ArrayList<>();
         }
         List<String> classList = new ArrayList<>();
-        File moduleDir = new File(dir, ROUTER_MODULE_CLASS_DIR);
+        File moduleDir = new File(dir, GenerateFileConstant.ROUTER_MODULE_CLASS_DIR);
         if (moduleDir.exists() && moduleDir.isDirectory()) {
             Collection<File> classFiles = FileUtils.listFiles(moduleDir, new SuffixFileFilter(SdkConstants.DOT_CLASS,
                     IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
             for (File file : classFiles) {
                 String className = trimName(file.getAbsolutePath(), dir.getAbsolutePath().length() + 1);
                 className = className.replace(File.separatorChar, '.');
-                if (className.contains(PluginConstant.MODULE_CLASS_PREFIX)) {
-                    Pattern pattern = Pattern.compile("\\d+$");
+                if (className.contains(prefix)) {
+                    Pattern pattern = Pattern.compile("\\$\\d+$");
                     Matcher matcher = pattern.matcher(className);
                     //不是匿名内部类
                     if (!matcher.find()) {

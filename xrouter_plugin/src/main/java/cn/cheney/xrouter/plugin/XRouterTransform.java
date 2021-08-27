@@ -20,9 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import cn.cheney.xrouter.plugin.utils.GenerateCodeUtils;
-import cn.cheney.xrouter.plugin.utils.ScannerUtils;
-import cn.cheney.xrouter.plugin.utils.XLogger;
+import cn.cheney.xrouter.constant.GenerateFileConstant;
 
 class XRouterTransform extends Transform {
     @Override
@@ -48,7 +46,9 @@ class XRouterTransform extends Transform {
     @Override
     public void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         super.transform(transformInvocation);
+        XLogger.debug("transform ===>");
         List<String> allModuleClassList = new ArrayList<>();
+        List<String> allInterceptorClassList = new ArrayList<>();
         for (TransformInput input : transformInvocation.getInputs()) {
             //jar的classfile
             Collection<JarInput> jarInputs = input.getJarInputs();
@@ -61,12 +61,16 @@ class XRouterTransform extends Transform {
                             jarInput.getScopes(),
                             Format.JAR);
 
-                    List<String> moduleClassInJarList = ScannerUtils.scanJar(src);
-                    allModuleClassList.addAll(moduleClassInJarList);
+                    allModuleClassList.addAll(CodeScanner
+                            .scanJar(GenerateFileConstant.MODULE_CLASS_PREFIX, src));
+
+                    allInterceptorClassList.addAll(CodeScanner
+                            .scanJar(GenerateFileConstant.INTERCEPTOR_CLASS_PREFIX, src));
+
                     FileUtils.copyFile(src, dest);
                 }
             }
-            //文件夹的classfile
+            //app的classfile
             Collection<DirectoryInput> dirInputs = input.getDirectoryInputs();
             if (null != dirInputs) {
                 for (DirectoryInput dirInput : dirInputs) {
@@ -75,10 +79,13 @@ class XRouterTransform extends Transform {
                             dirInput.getContentTypes(),
                             dirInput.getScopes(),
                             Format.DIRECTORY);
-                    List<String> moduleClassInDirList = ScannerUtils.scanDir(src);
-                    if (null != moduleClassInDirList) {
-                        allModuleClassList.addAll(moduleClassInDirList);
-                    }
+
+                    allModuleClassList.addAll(CodeScanner.
+                            scanDir(GenerateFileConstant.MODULE_CLASS_PREFIX, src));
+
+                    allInterceptorClassList.addAll(CodeScanner
+                            .scanDir(GenerateFileConstant.INTERCEPTOR_CLASS_PREFIX, src));
+
                     FileUtils.copyDirectory(src, dest);
                 }
             }
@@ -88,9 +95,13 @@ class XRouterTransform extends Transform {
                 ImmutableSet.of(QualifiedContent.Scope.PROJECT),
                 Format.DIRECTORY);
         for (String moduleStr : allModuleClassList) {
-            XLogger.debug("scan===>" + moduleStr);
+            XLogger.debug("scan router module ===>" + moduleStr);
         }
-        GenerateCodeUtils.generateClass(dest.getAbsolutePath(), allModuleClassList);
+        for (String interceptor : allInterceptorClassList) {
+            XLogger.debug("scan router interceptor ===>" + interceptor);
+        }
+        CodeGenerator.generateRouterLoaderClass(dest.getAbsolutePath(), allModuleClassList);
+        CodeGenerator.generateInterceptorLoaderClass(dest.getAbsolutePath(), allInterceptorClassList);
 
     }
 }

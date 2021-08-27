@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -44,7 +45,8 @@ public class ModuleClassGenerator {
 
     public ModuleClassGenerator(String module, XRouterProcessor.Holder holder) {
         this.module = module;
-        this.generatorClassName = GenerateFileConstant.MODULE_FILE_PREFIX + module;
+        this.generatorClassName = GenerateFileConstant.MODULE_FILE_PREFIX +
+                UUID.randomUUID().toString().replace("-", "");
         this.holder = holder;
         loadMethodBuilder = loadMethodBuilder();
     }

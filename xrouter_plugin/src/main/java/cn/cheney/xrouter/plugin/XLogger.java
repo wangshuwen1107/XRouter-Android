@@ -1,4 +1,4 @@
-package cn.cheney.xrouter.plugin.utils;
+package cn.cheney.xrouter.plugin;
 
 public class XLogger {
 

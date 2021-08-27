@@ -2,25 +2,24 @@ package cn.cheney.xrouter.core;
 
 import android.app.Activity;
 import android.app.Application;
-import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.cheney.xrouter.constant.GenerateFileConstant;
 import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.call.PageCall;
 import cn.cheney.xrouter.core.callback.EmptyActivityLifecycleCallBack;
-import cn.cheney.xrouter.core.exception.RouterErrorHandler;
 import cn.cheney.xrouter.core.exception.RouterException;
 import cn.cheney.xrouter.core.interceptor.BuildInvokeInterceptor;
+import cn.cheney.xrouter.core.interceptor.InterceptorManager;
 import cn.cheney.xrouter.core.interceptor.RealChain;
 import cn.cheney.xrouter.core.interceptor.RouterInterceptor;
 import cn.cheney.xrouter.core.invok.Invokable;
@@ -36,33 +35,30 @@ public class XRouter {
 
     private static final String DEFAULT_SCHEME = "xrouter";
 
-    private static final String ROUTER_LOAD_CLASS = "cn.cheney.xrouter.XRouterModule_Loader";
-
     public static String sScheme = DEFAULT_SCHEME;
 
     private static WeakReference<Activity> sTopActivityRf;
 
     private volatile static XRouter instance = null;
 
-    private static boolean hasInit;
+    private static boolean sHasInit;
 
-    private final static Map<String, Invokable<?>> sRouterMap = new HashMap<>();
+    private final Map<String, Invokable<?>> mRouterMap = new HashMap<>();
 
     private final SyringeManager mSyringeManager;
 
-    private final List<RouterInterceptor> mInterceptorList;
+    private final InterceptorManager mInterceptorManager;
 
     private final ParamParser mParamParser = new DefaultParser();
 
-    private RouterErrorHandler mErrorHandler;
 
     private XRouter() {
-        mInterceptorList = new ArrayList<>();
         mSyringeManager = new SyringeManager();
+        mInterceptorManager = new InterceptorManager();
     }
 
     public static XRouter getInstance() {
-        if (!hasInit) {
+        if (!sHasInit) {
             throw new RouterException("XRouter::Init::Invoke init(context) first!");
         }
         if (instance == null) {
@@ -77,6 +73,10 @@ public class XRouter {
     }
 
     public static void init(Application context, String scheme) {
+        if (sHasInit){
+            return;
+        }
+        sHasInit = true;
         context.registerActivityLifecycleCallbacks(new EmptyActivityLifecycleCallBack() {
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
@@ -88,17 +88,33 @@ public class XRouter {
             sScheme = scheme;
         }
         loadRouters();
-        hasInit = true;
+        loadInterceptor();
     }
 
     private static void loadRouters() {
+        long startTime = System.currentTimeMillis();
         try {
-            Class<?> loadClass = Class.forName(ROUTER_LOAD_CLASS);
+            Class<?> loadClass = Class.forName(GenerateFileConstant.ALL_ROUTER_LOAD_CLASS);
             Method loadInto = loadClass.getMethod("loadInto", Map.class);
-            loadInto.invoke(null, sRouterMap);
+            loadInto.invoke(null, getInstance().mRouterMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Logger.d("loadRouters size=" + getInstance().mRouterMap.entrySet().size()
+                + " time=" + (System.currentTimeMillis() - startTime));
+    }
+
+
+    private static void loadInterceptor() {
+        long startTime = System.currentTimeMillis();
+        try {
+            Class<?> loadClass = Class.forName(GenerateFileConstant.ALL_INTERCEPTOR_LOAD_CLASS);
+            Method loadInto = loadClass.getMethod("loadInto", Map.class);
+            loadInto.invoke(null, getInstance().mInterceptorManager.getInterceptorDescMap());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Logger.d("load Interceptor time=" + (System.currentTimeMillis() - startTime));
     }
 
     public void inject(Activity activity) {
@@ -128,39 +144,24 @@ public class XRouter {
         RequestManager.getInstance().invokeCallback(requestId, resultMap);
     }
 
-    public void addInterceptor(RouterInterceptor interceptor) {
-        if (!mInterceptorList.contains(interceptor)) {
-            mInterceptorList.add(interceptor);
-        }
-    }
-
-    public void setErrorHandler(RouterErrorHandler errorHandler) {
-        this.mErrorHandler = errorHandler;
-    }
-
     public Object proceed(BaseCall<?> call) {
-        addInterceptor(new BuildInvokeInterceptor());
-        RealChain realChain = new RealChain(call, mInterceptorList);
+        List<RouterInterceptor> interceptorList =
+                mInterceptorManager.getInterceptorList(call.getModule(), call.getPath());
+        interceptorList.add(new BuildInvokeInterceptor());
+        RealChain realChain = new RealChain(call, interceptorList);
         return realChain.proceed(call);
-    }
-
-    public void onError(String url, String errorMsg) {
-        if (null != mErrorHandler) {
-            mErrorHandler.onError(url, errorMsg);
-        }
     }
 
     public Activity getTopActivity() {
         return sTopActivityRf.get();
     }
 
-
-    public static Map<String, Invokable<?>> getRouterMap() {
-        return sRouterMap;
+    public Map<String, Invokable<?>> getRouterMap() {
+        return mRouterMap;
     }
 
     public Object parse(BaseCall<?> call, String paramName, String paramValue) {
-        Invokable<?> invokable = sRouterMap.get(call.getModule() + "/" + call.getPath());
+        Invokable<?> invokable = mRouterMap.get(call.getModule() + "/" + call.getPath());
         if (null == invokable || TextUtils.isEmpty(paramName)) {
             return paramValue;
         }
@@ -179,8 +180,5 @@ public class XRouter {
         return paramValue;
     }
 
-    private static String getUriSite(Uri uri) {
-        return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
-    }
 
 }

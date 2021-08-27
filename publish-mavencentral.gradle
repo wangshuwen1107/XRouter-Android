@@ -83,8 +83,8 @@ publishing {
                     def dependenciesNode = asNode().appendNode('dependencies')
 
                     project.configurations.implementation.allDependencies.each {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
                         if (null != it.group && null != it.name && null != it.version) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
                             dependencyNode.appendNode('groupId', it.group)
                             dependencyNode.appendNode('artifactId', it.name)
                             dependencyNode.appendNode('version', it.version)

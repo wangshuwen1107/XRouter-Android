@@ -3,12 +3,12 @@ plugins {
     id 'maven'
 }
 
-
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
     implementation 'com.android.tools.build:gradle:3.3.2'
     implementation 'org.jetbrains:annotations:15.0'
+    implementation "io.github.wangshuwen1107:xrouter-annotation:$sdkVersion"
 }
 
 
@@ -16,13 +16,21 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
+//发布
+ext {
+    PUBLISH_GROUP_ID = "io.github.wangshuwen1107"
+    PUBLISH_ARTIFACT_ID = 'xrouter-plugin'
+    PUBLISH_VERSION = "$sdkVersion"
+}
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
+//debug本地调试
 uploadArchives {
     repositories {
         mavenDeployer {
-            pom.groupId = 'cn.cheney.plugin'
-            pom.artifactId = 'xrouter'
-            pom.version = '1.0.1'
+            pom.groupId = 'io.github.wangshuwen1107'
+            pom.artifactId = 'xrouter-plugin'
+            pom.version = "$sdkVersion"
             //发布到本地repo 测试时候用
             repository(url: uri('../repo'))
         }
