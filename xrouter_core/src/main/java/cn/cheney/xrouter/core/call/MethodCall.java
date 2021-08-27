@@ -38,13 +38,7 @@ public class MethodCall<R> extends BaseCall<R> {
             this.paramsMap.put(XParam.RequestId, requestId);
             RequestManager.getInstance().addCallback(requestId, callback);
         }
-        R result = (R) XRouter.getInstance().proceed(this);
-        if (null == result) {
-            if (null != callback) {
-                callback.onResult(null);
-            }
-        }
-        return result;
+        return (R)XRouter.getInstance().proceed(this);
     }
 
     public MethodCall<R> put(String key, Object val) {

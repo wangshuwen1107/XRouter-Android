@@ -40,7 +40,7 @@ public class InterceptorManager {
             }
         }
         if (allDescList.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         //去重
         List<InterceptorDesc> filterDescList = new ArrayList<>();

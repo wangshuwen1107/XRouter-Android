@@ -38,7 +38,6 @@ android {
 dependencies {
     api 'com.alibaba:fastjson:1.2.23'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'org.jetbrains:annotations:15.0'
     if(debug == "true"){
         api project(":xrouter_annotation")
     }else {
