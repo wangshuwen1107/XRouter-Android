@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = "io.github.wangshuwen1107"
     PUBLISH_ARTIFACT_ID = 'xrouter-core'
-    PUBLISH_VERSION = "$sdkVersion"
+    PUBLISH_VERSION = "$coreVersion"
 }
 apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
@@ -41,7 +41,7 @@ dependencies {
     if(debug == "true"){
         api project(":xrouter_annotation")
     }else {
-        api "io.github.wangshuwen1107:xrouter-annotation:$sdkVersion"
+        api "io.github.wangshuwen1107:xrouter-annotation:$annotationVersion"
     }
 }
 

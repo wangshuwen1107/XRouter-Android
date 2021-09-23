@@ -21,7 +21,7 @@ public class ModuleA {
     public static Book getBookName(Context context) {
         Log.i(TAG, "getBookName context=" + context);
         Book book = new Book();
-        book.name = "从入门到放弃";
+        book.name = "kotlin";
         return book;
     }
 

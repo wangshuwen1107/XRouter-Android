@@ -9,7 +9,7 @@ buildscript {
         maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
     }
     dependencies {
-        classpath "io.github.wangshuwen1107:xrouter-plugin:$sdkVersion"
+        classpath "io.github.wangshuwen1107:xrouter-plugin:$pluginVersion"
         classpath 'com.android.tools.build:gradle:3.3.2'
     }
 }

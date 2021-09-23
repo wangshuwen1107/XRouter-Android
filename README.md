@@ -1,14 +1,13 @@
 ![](media/XRouter.png)
 
 # XRRouter
+[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 #### 最新版本
 
-|  模块 | xrouter_annotation  |  xrouter_complier|xrouter_core|
-| ------------ | ------------ | ------------ | ------------ |
-| 最新版本 | 1.0.5|  1.0.5 |1.0.5 |
-
-
+|  模块 | xrouter-annotation  |  xrouter-compiler|xrouter-core|xrouter-plugin|
+| ------------ | ------------ | ------------ | ------------ |------------ |
+| 最新版本 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-annotation/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-annotation) |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-compiler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-compiler)  |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-core) |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-plugin)|
 
 #### 添加依赖和配置
 
@@ -19,6 +18,9 @@ allprojects {
    repositories {
        mavenCentral()
    }
+  dependencies {
+        classpath "io.github.wangshuwen1107:xrouter-plugin:x.x.x"
+    }
 }
 ```
 
@@ -26,10 +28,19 @@ allprojects {
 
 ```gradle
 dependencies {
-   implementation 'cn.cheney.xrouter:core:x.x.x'
-   annotationProcessor 'cn.cheney.xrouter:compiler:x.x.x'
+   implementation 'io.github.wangshuwen1107:xrouter-core:x.x.x'
+   annotationProcessor 'io.github.wangshuwen1107:xrouter-compiler:x.x.x'
 }
 ```
+
+3.application build.gradle
+
+```gradle
+apply plugin: 'XRouter'
+```
+
+
+
 
 #### 功能&说明
 
@@ -47,31 +58,13 @@ public class App extends Application {
 
    @Override
    public void onCreate() {
-       super.onCreate();
-       //初始化
-       XRouter.init(this, "scheme");
-       //增加拦截器
-       XRouter.getInstance().addInterceptor(new RouterInterceptor() {
-           @Override
-           public Invokable intercept(Chain chain) {
-               BaseCall call = chain.call();
-               String urlStr = call.getUri().toString();
-               Logger.d(" RouterInterceptor urlStr=" + urlStr);
-               return chain.proceed(call);
-           }
-       });
-       //全局路由错误处理
-       XRouter.getInstance().setErroHandler(new RouterErrorHandler() {
-           @Override
-           public void onError(String url, String errorMsg) {
-               Logger.e("Url:" + url + " errorMsg:" + errorMsg);
-           }
-       });
+       super.onCreate();  
+       XRouter.init(this, "scheme");  
    }
 }
 ```
 
-2.注解
+2.路由注册
 
 ```java
 @XRoute(path = "pageName", module = "moduleName")
@@ -105,7 +98,24 @@ public class YourModule{
 }
 ```
 
-3.调用
+3.拦截器注册
+
+```java
+@XInterceptor(modules = {"moduleA"}, priority = 1)
+public class TestInterceptorA implements RouterInterceptor {
+
+    @Override
+    public Object intercept(Chain chain) {
+        Logger.d("TestInterceptorA url=" + chain.call().getUri().toString());
+        return chain.proceed();
+    }
+
+}
+```
+
+
+
+4.路由调用
 
 ```java
 //跳转界面

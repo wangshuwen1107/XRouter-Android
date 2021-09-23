@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             book.name = "Kotlin";
             XRouter.<Book>method("moduleA/setBookInfo?info={\"key\":{\"name\":\"wang\"}}")
                     .put("book", book).call(result ->
-                    AlertUtil.showAlert(MainActivity.this, result.toString()));
+                    AlertUtil.showAlert(MainActivity.this, result==null?"null":result.toString()));
         });
 
 
