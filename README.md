@@ -7,7 +7,7 @@
 
 |  模块 | xrouter-annotation  |  xrouter-compiler|xrouter-core|xrouter-plugin|
 | ------------ | ------------ | ------------ | ------------ |------------ |
-| 最新版本 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-annotation/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-annotation) |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-compiler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-compiler)  |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-core) |[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.wangshuwen1107/xrouter-plugin)|
+| 最新版本 | [![Maven Central](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-annotation)](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-annotation) |[![Maven Central](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-compiler)](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-compiler)  |[![Maven Central](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-core)](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-core) |[![Maven Central](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-plugin)](https://img.shields.io/maven-central/v/io.github.wangshuwen1107/xrouter-plugin)|
 
 #### 添加依赖和配置
 
