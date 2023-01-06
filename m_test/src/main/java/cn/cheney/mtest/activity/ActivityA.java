@@ -2,11 +2,13 @@ package cn.cheney.mtest.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +27,12 @@ public class ActivityA extends AppCompatActivity {
     List<String> infoList;
     @XParam()
     Map<String, String> infoMap;
+    @XParam(name = XParam.RequestId)
+    String requestId;
 
     private TextView paramsText;
+
+    private Button resultBtn;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -43,9 +49,19 @@ public class ActivityA extends AppCompatActivity {
         setTitle("page/a");
 
         paramsText = findViewById(R.id.params_txt);
-        paramsText.setText("Book:" + book + " \n" +
+        paramsText.setText("RequestId:" + requestId + " \n" +
+                "Book:" + book + " \n" +
                 "infoList:" + infoList + " \n" +
                 "infoMap:" + infoMap + " \n");
+
+        //回传activity值
+        resultBtn = findViewById(R.id.resultBtn);
+        resultBtn.setOnClickListener(v -> {
+            Map<String, Object> result = new HashMap<>();
+            result.put("activityA", "result");
+            finish();
+            XRouter.getInstance().invokeCallback(requestId, result);
+        });
     }
 
     @XMethod(name = "activityMethod")

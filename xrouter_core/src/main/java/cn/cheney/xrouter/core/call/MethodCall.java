@@ -13,20 +13,12 @@ public class MethodCall<R> extends BaseCall<R> {
         super(uriStr);
     }
 
-    @Override
-    public R call() {
-        return this.call(null, null);
+    public MethodCall<R> put(String key, Object val) {
+        this.paramsMap.put(key, val);
+        return this;
     }
 
     @Override
-    public R call(Context context) {
-        return this.call(context, null);
-    }
-
-    public R call(RouteCallback callback) {
-        return this.call(null, callback);
-    }
-
     public R call(Context context, RouteCallback callback) {
         if (context == null) {
             context = XRouter.getInstance().getTopActivity();
@@ -38,12 +30,8 @@ public class MethodCall<R> extends BaseCall<R> {
             this.paramsMap.put(XParam.RequestId, requestId);
             RequestManager.getInstance().addCallback(requestId, callback);
         }
-        return (R)XRouter.getInstance().proceed(this);
+        return (R) XRouter.getInstance().proceed(this, callback);
     }
 
-    public MethodCall<R> put(String key, Object val) {
-        this.paramsMap.put(key, val);
-        return this;
-    }
 
 }

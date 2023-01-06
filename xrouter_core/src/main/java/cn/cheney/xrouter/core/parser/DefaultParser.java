@@ -3,24 +3,23 @@ package cn.cheney.xrouter.core.parser;
 import com.alibaba.fastjson.JSON;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 public class DefaultParser implements ParamParser {
 
     @Override
     public Object parse(String paramName, String paramValue, Type paramType) {
         if (paramType == String.class) {
-            return paramType.toString();
+            return paramValue;
         } else if (paramType == boolean.class || paramType == Boolean.class) {
-            return paramValue == null ? null : parseBoolean(paramValue.toString());
+            return paramValue == null ? null : parseBoolean(paramValue);
         } else if (paramType == int.class || paramType == Integer.class) {
-            return paramValue == null ? null : (int) parseLong(paramValue.toString());
+            return paramValue == null ? null : (int) parseLong(paramValue);
         } else if (paramType == long.class || paramType == Long.class) {
-            return paramValue == null ? null : parseLong(paramValue.toString());
+            return paramValue == null ? null : parseLong(paramValue);
         } else if (paramType == float.class || paramType == Float.class) {
-            return paramValue == null ? null : Float.valueOf(paramValue.toString());
+            return paramValue == null ? null : Float.valueOf(paramValue);
         } else if (paramType == double.class || paramType == Double.class) {
-            return paramValue == null ? null : Double.valueOf(paramValue.toString());
+            return paramValue == null ? null : Double.valueOf(paramValue);
         } else if (paramType == String[].class) {
             return JSON.parseArray(paramValue, String.class).toArray();
         } else if (paramType == int[].class) {
@@ -31,8 +30,6 @@ public class DefaultParser implements ParamParser {
             return JSON.parseArray(paramValue, double.class).toArray();
         } else if (paramType == long[].class) {
             return JSON.parseArray(paramValue, long.class).toArray();
-        } else if (paramType == List.class) {
-            return JSON.parseArray(paramValue, paramType.getClass());
         }
         return JSON.parseObject(paramValue, paramType);
     }

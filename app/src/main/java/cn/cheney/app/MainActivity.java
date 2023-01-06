@@ -1,11 +1,10 @@
 package cn.cheney.app;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,8 +14,7 @@ import java.util.Map;
 import cn.cheney.mtest.AlertUtil;
 import cn.cheney.mtest.entity.Book;
 import cn.cheney.xrouter.core.XRouter;
-import cn.cheney.xrouter.core.call.MethodCall;
-import cn.cheney.xrouter.core.util.Logger;
+import cn.cheney.xrouter.core.callback.RouteCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,44 +34,77 @@ public class MainActivity extends AppCompatActivity {
                     .put("book", new Book("Java"))
                     .action("cn.cheney.xrouter")
                     .anim(R.anim.enter_bottom, R.anim.no_anim)
-                    .call();
+                    .requestCode(2000)
+                    .call(this, new RouteCallback() {
+                        @Override
+                        public void onResult(Map<String, Object> result) {
+                            AlertUtil.showAlert(MainActivity.this, JSON.toJSONString(result));
+                        }
+
+                        @Override
+                        public void onError(int code, String message) {
+
+                        }
+
+                        @Override
+                        public void notFound() {
+                        }
+                    });
         });
 
         //路由执行同步方法
         findViewById(R.id.btn2).setOnClickListener(v -> {
             Book book = new Book();
             book.name = "Kotlin";
-            MethodCall<Book> bookMethodCall = XRouter.<Book>method(
-                    "moduleA/getBookName");
-            Book bookReturn = bookMethodCall.call();
-            AlertUtil.showAlert(MainActivity.this, bookReturn.toString());
+            List<Book> bookList = new ArrayList<>();
+            bookList.add(book);
+            Boolean setSuccess = XRouter.<Boolean>method("moduleA/setBookList?bookList="
+                    + JSON.toJSONString(bookList) + "&strValue=strValue")
+                    .call();
+            AlertUtil.showAlert(MainActivity.this, "" + setSuccess);
         });
 
         //路由执行异步方法
         findViewById(R.id.btn3).setOnClickListener(v -> {
             Book book = new Book();
             book.name = "Kotlin";
-            XRouter.<Book>method("moduleA/setBookInfo?info={\"key\":{\"name\":\"wang\"}}")
-                    .put("book", book).call(result ->
-                    AlertUtil.showAlert(MainActivity.this, result==null?"null":result.toString()));
+            //测试urlEncode参数
+            XRouter.<Book>method("moduleA/setBookInfo?info=%7B%22key%22%3A%20%22%26info2%3D123%22%7D")
+                    .put("book", book).call(new RouteCallback() {
+                @Override
+                public void onResult(Map<String, Object> result) {
+                    String content = result == null ? "null" : result.toString();
+                    AlertUtil.showAlert(MainActivity.this, content);
+                }
+
+                @Override
+                public void onError(int code, String message) {
+                    String content = "code=" + code + ";message=" + message;
+                    AlertUtil.showAlert(MainActivity.this, content);
+                }
+            });
         });
 
-
+        //未找到路由测试
         findViewById(R.id.btn4).setOnClickListener(v -> {
             Book bookError = XRouter.<Book>method("sssss")
-                    .call(result -> AlertUtil.showAlert(MainActivity.this, "错误异步返回结果=" + result));
-            AlertUtil.showAlert(MainActivity.this, "错误同步返回结果=" + bookError);
+                    .call(new RouteCallback() {
+                        @Override
+                        public void onResult(Map<String, Object> result) {
+                            super.onResult(result);
+                        }
+
+                        @Override
+                        public void notFound() {
+                            AlertUtil.showAlert(MainActivity.this, "没找到路由");
+                        }
+
+                        @Override
+                        public void onError(int code, String message) {
+                            super.onError(code, message);
+                        }
+                    });
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2000) {
-            if (null != data) {
-                Uri uri = data.getData();
-                Logger.d("uri=" + uri);
-            }
-        }
-    }
 }

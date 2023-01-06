@@ -3,7 +3,10 @@ package cn.cheney.mtest.module;
 import android.content.Context;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.cheney.mtest.entity.Book;
@@ -17,21 +20,20 @@ public class ModuleA {
 
     private static final String TAG = ModuleA.class.getSimpleName();
 
-    @XMethod(name = "getBookName")
-    public static Book getBookName(Context context) {
-        Log.i(TAG, "getBookName context=" + context);
-        Book book = new Book();
-        book.name = "kotlin";
-        return book;
-    }
-
     @XMethod(name = "setBookInfo")
     public static void getAsyncBookName(@XParam(name = XParam.RequestId) String requestId,
-                                        @XParam(name = "info") Map<String, Book> mapInfo) {
+                                        @XParam(name = "info") Map<String, String> mapInfo) {
         Log.i(TAG, "setBookInfo requestId =" + requestId + " mapInfo=" + mapInfo);
         HashMap<String, Object> map = new HashMap<>();
         map.put("result", "success");
         XRouter.getInstance().invokeCallback(requestId, map);
+    }
+
+    @XMethod(name = "setBookList")
+    public static Boolean setBookList(Context context, List<Book> bookList, String strValue) {
+        Log.i(TAG, "setBookList bookList=" + JSON.toJSONString(bookList));
+        Log.i(TAG, "setBookList strValue=" + strValue);
+        return true;
     }
 
 

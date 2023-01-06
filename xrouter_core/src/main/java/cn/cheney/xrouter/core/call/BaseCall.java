@@ -4,12 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cn.cheney.xrouter.core.XRouter;
+import cn.cheney.xrouter.core.callback.RouteCallback;
 
 public abstract class BaseCall<R> {
 
@@ -73,40 +73,28 @@ public abstract class BaseCall<R> {
         if (TextUtils.isEmpty(query)) {
             return;
         }
-        List<String> nameAndValueList = toNamesAndValues(query);
-        if (nameAndValueList.isEmpty()) {
+        Set<String> parameterNames = uri.getQueryParameterNames();
+        if (parameterNames.isEmpty()) {
             return;
         }
-        for (int i = 0; i < nameAndValueList.size(); i = i + 2) {
-            String key = nameAndValueList.get(i);
-            String value = nameAndValueList.get(i + 1);
-            paramsMap.put(key, XRouter.getInstance().parse(this, key, value));
+        for (String paramName : parameterNames) {
+            String paramValue = uri.getQueryParameter(paramName);
+            paramsMap.put(paramName, XRouter.getInstance().parse(this, paramName, paramValue));
         }
     }
 
-    public static List<String> toNamesAndValues(String encodedQuery) {
-        List<String> result = new ArrayList<>();
-        if (encodedQuery.length() == 0) return result;
-        for (int pos = 0; pos <= encodedQuery.length(); ) {
-            int ampersandOffset = encodedQuery.indexOf('&', pos);
-            if (ampersandOffset == -1) ampersandOffset = encodedQuery.length();
-
-            int equalsOffset = encodedQuery.indexOf('=', pos);
-            if (equalsOffset == -1 || equalsOffset > ampersandOffset) {
-                result.add(encodedQuery.substring(pos, ampersandOffset));
-                result.add(null); // No value for this name.
-            } else {
-                result.add(encodedQuery.substring(pos, equalsOffset));
-                result.add(encodedQuery.substring(equalsOffset + 1, ampersandOffset));
-            }
-            pos = ampersandOffset + 1;
-        }
-        return result;
+    public R call() {
+        return call(XRouter.getInstance().getTopActivity(), null);
     }
 
-    public abstract R call();
+    public R call(Context context) {
+        return call(context, null);
+    }
 
-    public abstract R call(Context context);
+    public R call(RouteCallback callback) {
+        return call(null, callback);
+    }
 
+    public abstract R call(Context context, RouteCallback callback);
 
 }

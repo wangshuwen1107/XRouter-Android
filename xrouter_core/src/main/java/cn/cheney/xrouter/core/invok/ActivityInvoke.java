@@ -37,14 +37,15 @@ public class ActivityInvoke extends Invokable<Integer> {
             return -1;
         }
         Intent intent = new Intent(context, clazz);
-        fillIntent(intent, params);
+        intent.setData(getUri());
+        fillIntentExtra(intent, params);
         if (!TextUtils.isEmpty(action)) {
             intent.setAction(action);
         }
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-            return requestCode >= 0 ? requestCode : 1;
+            return 0;
         }
         Activity activity = ((Activity) context);
         if (requestCode >= 0) {
@@ -54,10 +55,10 @@ public class ActivityInvoke extends Invokable<Integer> {
         }
         activity.overridePendingTransition(enterAnim >= 0 ? enterAnim : -1,
                 exitAnim >= 0 ? exitAnim : -1);
-        return requestCode >= 0 ? requestCode : 1;
+        return 0;
     }
 
-    private static Intent fillIntent(Intent intent, Map<String, Object> params) {
+    private static Intent fillIntentExtra(Intent intent, Map<String, Object> params) {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             final Object value = entry.getValue();
             if (value instanceof String) {
@@ -101,7 +102,7 @@ public class ActivityInvoke extends Invokable<Integer> {
             } else if (value instanceof Serializable) {
                 intent.putExtra(entry.getKey(), (Serializable) value);
             } else if (value != null) {
-                throw new RouterException("NOT SUPPORT TYPE=" + value);
+                throw new RouterException(RouterException.UN_SUPPORT_EXTRA_TYPE, "activity不支持" + value + "类型传参");
             }
         }
         return intent;

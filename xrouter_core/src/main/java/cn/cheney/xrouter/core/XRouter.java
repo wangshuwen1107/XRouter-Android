@@ -17,6 +17,7 @@ import cn.cheney.xrouter.core.call.BaseCall;
 import cn.cheney.xrouter.core.call.MethodCall;
 import cn.cheney.xrouter.core.call.PageCall;
 import cn.cheney.xrouter.core.callback.EmptyActivityLifecycleCallBack;
+import cn.cheney.xrouter.core.callback.RouteCallback;
 import cn.cheney.xrouter.core.exception.RouterException;
 import cn.cheney.xrouter.core.interceptor.BuildInvokeInterceptor;
 import cn.cheney.xrouter.core.interceptor.InterceptorManager;
@@ -59,7 +60,7 @@ public class XRouter {
 
     public static XRouter getInstance() {
         if (!sHasInit) {
-            throw new RouterException("XRouter::Init::Invoke init(context) first!");
+            throw new RouterException(RouterException.NOT_INIT);
         }
         if (instance == null) {
             synchronized (XRouter.class) {
@@ -144,12 +145,26 @@ public class XRouter {
         RequestManager.getInstance().invokeCallback(requestId, resultMap);
     }
 
-    public Object proceed(BaseCall<?> call) {
+    public Object proceed(BaseCall<?> call, RouteCallback callback) {
         List<RouterInterceptor> interceptorList =
                 mInterceptorManager.getInterceptorList(call.getModule(), call.getPath());
         interceptorList.add(new BuildInvokeInterceptor());
         RealChain realChain = new RealChain(call, interceptorList);
-        return realChain.proceed();
+        Object value = null;
+        try {
+            value = realChain.proceed();
+        } catch (RouterException e) {
+            if (e.getCode() == RouterException.NOT_FOUND) {
+                if (null != callback) {
+                    callback.notFound();
+                }
+            } else {
+                if (null != callback) {
+                    callback.onError(e.getCode(), e.getMessage());
+                }
+            }
+        }
+        return value;
     }
 
     public Activity getTopActivity() {

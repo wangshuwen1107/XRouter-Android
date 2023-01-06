@@ -1,5 +1,7 @@
 package cn.cheney.xrouter.core.invok;
 
+import android.net.Uri;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ public abstract class Invokable<R> {
     String module;
     Class<?> clazz;
     List<ParamInfo> params;
+    Uri uri;
 
     public R invoke(Map<String, Object> params) {
         return null;
@@ -56,6 +59,14 @@ public abstract class Invokable<R> {
 
     public void setParams(List<ParamInfo> params) {
         this.params = params;
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
     }
 }
 

@@ -2,7 +2,10 @@ package cn.cheney.xrouter.core.call;
 
 import android.content.Context;
 
+import cn.cheney.xrouter.annotation.XParam;
+import cn.cheney.xrouter.core.RequestManager;
 import cn.cheney.xrouter.core.XRouter;
+import cn.cheney.xrouter.core.callback.RouteCallback;
 
 public class PageCall extends BaseCall<Integer> {
 
@@ -55,13 +58,15 @@ public class PageCall extends BaseCall<Integer> {
     }
 
     @Override
-    public Integer call() {
-        return call(XRouter.getInstance().getTopActivity());
+    public Integer call(Context context, RouteCallback callback) {
+        this.context = context;
+        if (null != callback) {
+            String requestId = RequestManager.getInstance().generateRequestId();
+            this.paramsMap.put(XParam.RequestId, requestId);
+            RequestManager.getInstance().addCallback(requestId, callback);
+        }
+        return (Integer) XRouter.getInstance().proceed(this, callback);
     }
 
-    public Integer call(Context context) {
-        this.context = context;
-        return (Integer) XRouter.getInstance().proceed(this);
-    }
 
 }

@@ -2,6 +2,12 @@ package cn.cheney.xrouter.core.callback;
 
 import java.util.Map;
 
-public interface RouteCallback {
-    void onResult(Map<String, Object> result);
+public abstract class RouteCallback {
+
+    public void onResult(Map<String, Object> result){}
+
+    public  void notFound(){}
+
+    public void onError(int code, String message){}
+
 }
