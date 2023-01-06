@@ -29,7 +29,7 @@ public class ModuleA {
         XRouter.getInstance().invokeCallback(requestId, map);
     }
 
-    @XMethod(name = "setBookList")
+    @XMethod(name = "setBookInfo")
     public static Boolean setBookList(Context context, List<Book> bookList, String strValue) {
         Log.i(TAG, "setBookList bookList=" + JSON.toJSONString(bookList));
         Log.i(TAG, "setBookList strValue=" + strValue);

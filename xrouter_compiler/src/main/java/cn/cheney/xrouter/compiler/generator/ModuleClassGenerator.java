@@ -90,11 +90,13 @@ public class ModuleClassGenerator {
     /**
      * routeMap.put("/test2",new MethodInvoke() or new ActivityInvoke());
      */
-    public void generateSeg(TypeElement classType, String path) {
+    public void generateSeg(TypeElement classType, String[] paths) {
         TypeMirror typeActivity = holder.elementUtils
                 .getTypeElement(XTypeMirror.ACTIVITY).asType();
         if (holder.types.isSubtype(classType.asType(), typeActivity)) {
-            addActivityInvoke(classType, path);
+            for (String path : paths) {
+                addActivityInvoke(classType, path);
+            }
         }
         for (Element element : classType.getEnclosedElements()) {
             if (element instanceof ExecutableElement) {
