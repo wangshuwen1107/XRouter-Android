@@ -93,11 +93,13 @@ public class ModuleClassGenerator {
     public void generateSeg(TypeElement classType, String[] paths) {
         TypeMirror typeActivity = holder.elementUtils
                 .getTypeElement(XTypeMirror.ACTIVITY).asType();
+        //页面路由
         if (holder.types.isSubtype(classType.asType(), typeActivity)) {
             for (String path : paths) {
                 addActivityInvoke(classType, path);
             }
         }
+        //方法路由
         for (Element element : classType.getEnclosedElements()) {
             if (element instanceof ExecutableElement) {
                 ExecutableElement executableElement = (ExecutableElement) element;

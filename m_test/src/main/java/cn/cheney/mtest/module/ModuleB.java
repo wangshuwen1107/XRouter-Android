@@ -15,10 +15,10 @@ import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute(module = "moduleA")
-public class ModuleA {
+@XRoute(module = "moduleB")
+public class ModuleB {
 
-    private static final String TAG = ModuleA.class.getSimpleName();
+    private static final String TAG = ModuleB.class.getSimpleName();
 
     @XMethod(name = "asyncSetBookName")
     public static void asyncSetBookName(@XParam(name = XParam.RequestId) String requestId,
@@ -29,10 +29,10 @@ public class ModuleA {
         XRouter.getInstance().invokeCallback(requestId, map);
     }
 
-
     @XMethod(name = "setBookInfo")
-    public static Boolean setBookList(Context context, List<Book> bookList) {
+    public static Boolean setBookList(Context context, List<Book> bookList, String strValue) {
         Log.i(TAG, "setBookList bookList=" + JSON.toJSONString(bookList));
+        Log.i(TAG, "setBookList strValue=" + strValue);
         return true;
     }
 

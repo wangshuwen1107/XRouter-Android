@@ -58,18 +58,18 @@ public class MainActivity extends AppCompatActivity {
             book.name = "Kotlin";
             List<Book> bookList = new ArrayList<>();
             bookList.add(book);
-            Boolean setSuccess = XRouter.<Boolean>method("moduleA/setBookList?bookList="
-                    + JSON.toJSONString(bookList) + "&strValue=strValue")
+            Boolean setSuccess = XRouter.<Boolean>method("moduleA/setBookInfo?bookList="
+                    + JSON.toJSONString(bookList))
                     .call();
             AlertUtil.showAlert(MainActivity.this, "" + setSuccess);
         });
 
-        //路由执行异步方法
+        //路由执行异步方法+测试uri encode逻辑
         findViewById(R.id.btn3).setOnClickListener(v -> {
             Book book = new Book();
             book.name = "Kotlin";
             //测试urlEncode参数
-            XRouter.<Book>method("moduleA/setBookInfo?info=%7B%22key%22%3A%20%22%26info2%3D123%22%7D")
+            XRouter.<Book>method("moduleA/asyncSetBookName?info=%7B%22key%22%3A%20%22%26info2%3D123%22%7D")
                     .put("book", book).call(new RouteCallback() {
                 @Override
                 public void onResult(Map<String, Object> result) {

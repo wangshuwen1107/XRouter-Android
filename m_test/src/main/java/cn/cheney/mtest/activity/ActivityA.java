@@ -19,7 +19,7 @@ import cn.cheney.xrouter.annotation.XParam;
 import cn.cheney.xrouter.annotation.XRoute;
 import cn.cheney.xrouter.core.XRouter;
 
-@XRoute(module = "moduleA", path = {"page/a","page/a/copy"})
+@XRoute(module = "moduleA", path = {"page/a"})
 public class ActivityA extends AppCompatActivity {
     @XParam()
     Book book;

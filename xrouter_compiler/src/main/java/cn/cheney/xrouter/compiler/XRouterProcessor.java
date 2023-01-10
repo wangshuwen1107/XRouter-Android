@@ -20,6 +20,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
@@ -41,6 +42,7 @@ public class XRouterProcessor extends AbstractProcessor {
 
     private Holder holder;
     private Map<String, ModuleClassGenerator> moduleMap = new HashMap<>();
+    private Set<String> routeSet = new HashSet<>();
     private Map<TypeElement, List<Element>> paramsMap = new HashMap<>();
 
     @Override
@@ -180,7 +182,12 @@ public class XRouterProcessor extends AbstractProcessor {
             } else {
                 groupClassGenerator = moduleMap.get(route.module());
             }
-            groupClassGenerator.generateSeg(typeElement, route.path());
+            String[] paths = route.path();
+            if (checkUriRepeat(typeElement, module, paths)) {
+                return;
+            }
+            groupClassGenerator.generateSeg(typeElement, paths);
+
         }
         for (Map.Entry<String, ModuleClassGenerator> entry : moduleMap.entrySet()) {
             ModuleClassGenerator moduleClassGenerator = entry.getValue();
@@ -188,6 +195,40 @@ public class XRouterProcessor extends AbstractProcessor {
         }
     }
 
+
+    private boolean checkUriRepeat(TypeElement classType, String module, String[] activityRoutePaths) {
+        for (String path : activityRoutePaths) {
+            String uri = module + "/" + path;
+            if (routeSet.contains(uri)) {
+                Logger.e("the page uri=" + uri + " is repeat !!! please check  class="
+                        + classType.getQualifiedName());
+                return true;
+            }
+            routeSet.add(uri);
+        }
+        for (Element element : classType.getEnclosedElements()) {
+            if (element instanceof ExecutableElement) {
+                ExecutableElement executableElement = (ExecutableElement) element;
+                XMethod xMethod = executableElement.getAnnotation(XMethod.class);
+                if (null == xMethod) {
+                    continue;
+                }
+                String methodPath = xMethod.name();
+                if (methodPath.isEmpty()) {
+                    continue;
+                }
+                String methodUri = module + "/" + methodPath;
+                if (routeSet.contains(methodUri)) {
+                    Logger.e("the uri=" + methodUri + " is repeat !!! please check in method="
+                            + executableElement.getSimpleName() + " class="
+                            + classType.getQualifiedName());
+                    return true;
+                }
+                routeSet.add(methodUri);
+            }
+        }
+        return false;
+    }
 
     private void processInterceptor(RoundEnvironment roundEnvironment) {
         Set<? extends Element> elementSet = roundEnvironment.getElementsAnnotatedWith(XInterceptor.class);
