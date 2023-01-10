@@ -9,9 +9,9 @@ import com.android.build.api.transform.TransformException;
 import com.android.build.api.transform.TransformInput;
 import com.android.build.api.transform.TransformInvocation;
 import com.android.build.gradle.internal.pipeline.TransformManager;
-import com.android.tools.r8.com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.io.FileUtils;
+import org.gradle.internal.impldep.com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 import java.io.IOException;
