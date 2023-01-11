@@ -11,12 +11,12 @@ import com.android.build.api.transform.TransformInvocation;
 import com.android.build.gradle.internal.pipeline.TransformManager;
 
 import org.apache.commons.io.FileUtils;
-import org.gradle.internal.impldep.com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -90,9 +90,11 @@ class XRouterTransform extends Transform {
                 }
             }
         }
+        Set<QualifiedContent.Scope> scopeSet = new HashSet<>();
+        scopeSet.add(QualifiedContent.Scope.PROJECT);
         File dest = transformInvocation.getOutputProvider().getContentLocation("XRouter",
                 TransformManager.CONTENT_CLASS,
-                ImmutableSet.of(QualifiedContent.Scope.PROJECT),
+                scopeSet,
                 Format.DIRECTORY);
         for (String moduleStr : allModuleClassList) {
             XLogger.debug("scan router module ===>" + moduleStr);
