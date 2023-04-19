@@ -13,5 +13,8 @@ public @interface XInterceptor {
 
     String[] modules() default {};
 
+    /**
+     * 优先级 值越大 越先触发
+     */
     int priority() default 0;
 }

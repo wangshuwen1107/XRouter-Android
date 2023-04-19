@@ -158,10 +158,13 @@ public class XRouter {
                 if (null != callback) {
                     callback.notFound();
                 }
-            } else {
+            } else if (e.getCode() == RouterException.HAS_INTERCEPT) {
                 if (null != callback) {
-                    callback.onError(e.getCode(), e.getMessage());
+                    callback.hasIntercept();
                 }
+            }
+            if (null != callback) {
+                callback.onError(e.getCode(), e.getMessage());
             }
         }
         return value;

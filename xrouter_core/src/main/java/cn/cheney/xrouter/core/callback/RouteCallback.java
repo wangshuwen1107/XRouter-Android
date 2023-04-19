@@ -8,6 +8,8 @@ public abstract class RouteCallback {
 
     public  void notFound(){}
 
+    public  void hasIntercept(){}
+
     public void onError(int code, String message){}
 
 }

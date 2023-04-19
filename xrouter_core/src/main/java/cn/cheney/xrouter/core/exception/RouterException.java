@@ -13,9 +13,10 @@ public class RouterException extends RuntimeException {
 
     public static final int NOT_INIT = -100;
     public static final int NOT_FOUND = -1000;
-    public static final int INVOKE_ERROR = -1002;
     public static final int UN_KNOWN = -1001;
-    public static final int UN_SUPPORT_EXTRA_TYPE = -1001;
+    public static final int INVOKE_ERROR = -1002;
+    public static final int UN_SUPPORT_EXTRA_TYPE = -1003;
+    public static final int HAS_INTERCEPT = -1004;
 
 
     private int code;

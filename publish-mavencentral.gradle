@@ -44,7 +44,7 @@ publishing {
             version PUBLISH_VERSION
 
             if (isAar) {
-                artifact("$buildDir/outputs/aar/${project.getName()}.aar")
+                artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
                 artifact androidSourcesJar
             } else {
                 artifact("$buildDir/libs/${project.getName()}.jar")

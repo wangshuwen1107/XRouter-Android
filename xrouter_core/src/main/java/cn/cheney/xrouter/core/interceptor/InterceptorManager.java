@@ -71,6 +71,8 @@ public class InterceptorManager {
                             interceptorList.add(interceptor);
                         }
                         interceptorCacheMap.put(clazz, interceptor);
+                    }else {
+                        interceptorList.add(interceptor);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

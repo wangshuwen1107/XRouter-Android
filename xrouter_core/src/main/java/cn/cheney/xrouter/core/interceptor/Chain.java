@@ -11,4 +11,6 @@ public interface Chain {
      * @return value
      */
     Object proceed();
+
+    void stop();
 }
