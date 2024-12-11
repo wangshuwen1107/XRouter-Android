@@ -25,4 +25,14 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete "./repo"
+    delete "./publish"
+}
+
+
+ext {
+    compileSdkVersion = 30
+    buildToolsVersion = '30.0.3'
+    minSdkVersion = 21
+    targetSdkVersion = 30
 }

@@ -3,7 +3,7 @@ apply plugin: 'java-library'
 ext {
     PUBLISH_GROUP_ID = "io.github.wangshuwen1107"
     PUBLISH_ARTIFACT_ID = 'xrouter-compiler'
-    PUBLISH_VERSION = "$coreVersion"
+    PUBLISH_VERSION = "$compilerVersion"
 }
 apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 

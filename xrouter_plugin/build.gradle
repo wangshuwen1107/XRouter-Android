@@ -1,7 +1,8 @@
 plugins {
+    id 'java-library'
     id 'groovy'
-    id 'maven'
 }
+
 
 dependencies {
     implementation gradleApi()
@@ -23,16 +24,3 @@ ext {
     PUBLISH_VERSION = "$pluginVersion"
 }
 apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
-
-//debug本地调试
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.groupId = 'io.github.wangshuwen1107'
-            pom.artifactId = 'xrouter-plugin'
-            pom.version = "$pluginVersion"
-            //发布到本地repo 测试时候用
-            repository(url: uri('../repo'))
-        }
-    }
-}

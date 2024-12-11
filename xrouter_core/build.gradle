@@ -8,15 +8,14 @@ ext {
 apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 29
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
 
@@ -35,13 +34,14 @@ android {
 }
 
 
+
 dependencies {
-    api 'com.alibaba:fastjson:1.2.23'
+    implementation 'com.alibaba:fastjson:1.2.23'
     implementation 'androidx.annotation:annotation:1.1.0'
-    if(debug == "true"){
-        api project(":xrouter_annotation")
-    }else {
-        api "io.github.wangshuwen1107:xrouter-annotation:$annotationVersion"
+    if (debug == "true") {
+        implementation project(":xrouter_annotation")
+    } else {
+        implementation "io.github.wangshuwen1107:xrouter-annotation:$annotationVersion"
     }
 }
 

@@ -18,23 +18,17 @@ if (isAar) {
     }
 }
 
-ext["signing.keyId"] = ''
-ext["signing.password"] = ''
-ext["signing.secretKeyRingFile"] = ''
-ext["ossrhUsername"] = ''
-ext["ossrhPassword"] = ''
-
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
     println "Found secret props file, loading props"
     Properties p = new Properties()
     p.load(new FileInputStream(secretPropsFile))
-    p.each { name, value ->
-        ext[name] = value
+    p.each { name, value -> ext[name] = value
     }
 } else {
     println "No props file, loading env vars"
 }
+
 
 publishing {
     publications {
@@ -44,10 +38,10 @@ publishing {
             version PUBLISH_VERSION
 
             if (isAar) {
-                artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                afterEvaluate { artifact(tasks.getByName("bundleReleaseAar")) }
                 artifact androidSourcesJar
             } else {
-                artifact("$buildDir/libs/${project.getName()}.jar")
+                components.java
                 artifact sourcesJar
                 artifact javadocJar
             }
@@ -74,14 +68,12 @@ publishing {
                 scm {
                     connection = 'scm:git:github.com/wangshuwen1107/XRouter-Android.git'
                     developerConnection = 'scm:git:ssh://github.com/wangshuwen1107/XRouter-Android.git'
-                    //分支地址：
                     url = 'https://github.com/wangshuwen1107/XRouter-Android.git/master'
                 }
                 // A slightly hacky fix so that your POM will include any transitive dependencies
                 // that your library builds upon
                 withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
-
                     project.configurations.implementation.allDependencies.each {
                         if (null != it.group && null != it.name && null != it.version) {
                             def dependencyNode = dependenciesNode.appendNode('dependency')
@@ -99,22 +91,54 @@ publishing {
         maven {
             // This is an arbitrary name, you may also use "mavencentral" or
             // any other name that's descriptive for you
-            name = "XRouter-Android"
-
-            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            // You only need this if you want to publish snapshots, otherwise just set the URL
-            // to the release repo directly
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
-            // The username and password we've fetched earlier
-            credentials {
-                username ossrhUsername
-                password ossrhPassword
-            }
+            // name = "XRouter-Android"
+            url = uri('../repo')
         }
     }
 }
+
+
 signing {
     sign publishing.publications
+}
+
+task zipRepo(type: Zip) {
+    def componentDirPath = "${PUBLISH_GROUP_ID.replace(".", "/")}/$PUBLISH_ARTIFACT_ID/$PUBLISH_VERSION"
+
+    archiveBaseName = PUBLISH_ARTIFACT_ID
+    archiveVersion = PUBLISH_VERSION
+    destinationDirectory = file("../publish")
+
+    from("${rootProject.projectDir}/repo/$componentDirPath") {
+        into("$componentDirPath")
+    }
+}
+
+
+task publishSonatype(dependsOn: ['publishReleasePublicationToMavenRepository', 'zipRepo']) {
+    group = "publishing"
+    doLast {
+        def publishZipFile = file("../publish/$PUBLISH_ARTIFACT_ID-$PUBLISH_VERSION" + ".zip")
+        def uploadToken = Base64.getEncoder().encodeToString("$ossrhUsername:$ossrhPassword".getBytes("UTF-8"))
+        println "发布 uploadToken=$uploadToken"
+        println "发布 bundle=${publishZipFile.absolutePath}"
+        def curlOutput = new ByteArrayOutputStream()
+        def curlError = new ByteArrayOutputStream()
+        try {
+            exec {
+                commandLine 'curl', '--request', 'POST',
+                        '--header', "Authorization: Bearer $uploadToken",
+                        '--form', "bundle=@${publishZipFile.absolutePath}",
+                        '--form', "publishingType=AUTOMATIC",
+                        //'--form', "publishingType=USER_MANAGED",
+                        'https://central.sonatype.com/api/v1/publisher/upload'
+                standardOutput = curlOutput
+                errorOutput = curlError
+            }
+            println "发布结果*********: ${curlOutput.toString()}"
+        } catch (Exception e) {
+            println "发布失败*********: ${curlError.toString()}"
+            throw e
+        }
+    }
 }
