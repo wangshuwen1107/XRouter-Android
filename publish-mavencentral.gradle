@@ -105,14 +105,13 @@ signing {
     sign publishing.publications
 }
 
-task zipRepo(type: Zip ) {
+task zipRepo(type: Zip) {
+    group = "publishing"
     dependsOn isAar ? 'publishReleasePublicationToMavenRepository' : 'publishMavenJavaPublicationToMavenRepository'
     def componentDirPath = "${PUBLISH_GROUP_ID.replace(".", "/")}/$PUBLISH_ARTIFACT_ID/$PUBLISH_VERSION"
-
     archiveBaseName = PUBLISH_ARTIFACT_ID
     archiveVersion = PUBLISH_VERSION
     destinationDirectory = file("../publish")
-
     from("${rootProject.projectDir}/repo/$componentDirPath") {
         into("$componentDirPath")
     }
