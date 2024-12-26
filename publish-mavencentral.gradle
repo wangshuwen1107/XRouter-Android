@@ -47,7 +47,7 @@ def configurePublication = { MavenPublication publication ->
     pom {
         name = PUBLISH_ARTIFACT_ID
         description = 'XRouter-Android'
-        url = 'https://github.com/wangshuwen1107/XRouter-Android.git'
+        url = 'https://github.com/wangshuwen1107/XRouter-Android'
         licenses {
             license {
                 //协议类型，一般默认Apache License2.0的话不用改：
@@ -63,9 +63,9 @@ def configurePublication = { MavenPublication publication ->
             }
         }
         scm {
-            connection = 'scm:git:github.com/wangshuwen1107/XRouter-Android.git'
-            developerConnection = 'scm:git:ssh://github.com/wangshuwen1107/XRouter-Android.git'
-            url = 'https://github.com/wangshuwen1107/XRouter-Android.git/master'
+            connection = 'scm:git:https://github.com/wangshuwen1107/XRouter-Android.git'
+            developerConnection = 'scm:git:git@github.com:wangshuwen1107/XRouter-Android.git'
+            url = 'https://github.com/wangshuwen1107/XRouter-Android'
         }
         withXml {
             if (!uploadJar) {
